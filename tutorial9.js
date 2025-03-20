@@ -20,17 +20,12 @@ function CheckOptions() {
     let select = document.getElementById("bouquetOptions").value;
     let images = document.querySelectorAll(".product img");
 
-    if (select.includes("Champagne")) {
-        images[0].src = "images/white-gift.jpeg";
-        images[1].src = "images/pink-gift.jpeg";
-        images[2].src = "images/red-gift.jpeg";
-    } else {
-        images[0].src = "images/white.jpeg";
-        images[1].src = "images/pink.jpeg";
-        images[2].src = "images/red.jpeg";
-    }
+    let defaultImages = ["images/white.jpeg", "images/pink.jpeg", "images/red.jpeg", "images/yellow.jpeg", "images/blue.jpeg"];
+    let champagneImages = ["images/white_champagne.jpeg", "images/pink_champagne.jpeg", "images/red_champagne.jpeg", "images/yellow_champagne.jpeg", "images/blue_champagne.jpeg"];
 
-    displayBouquet();
+    images.forEach((img, index) => {
+        img.src = select.includes("Champagne") ? champagneImages[index] : defaultImages[index];
+    });
 }
 
 function displayBouquet() {
@@ -38,19 +33,27 @@ function displayBouquet() {
     let orderDiv = document.getElementById("order");
 
     if (chosenBouquet) {
-        let productDiv = document.getElementById("product" + (chosenBouquet === "white" ? "1" : chosenBouquet === "pink" ? "2" : "3")).innerHTML;
+        let bouquetId = {
+            "white": "1",
+            "pink": "2",
+            "red": "3",
+            "yellow": "4",
+            "blue": "5"
+        }[chosenBouquet];
 
-        // Wrap copied content inside a div with class="product"
+        let productDiv = document.getElementById("product" + bouquetId).innerHTML;
         orderDiv.innerHTML = `<div class="product">${productDiv}</div>`;
     } else {
         orderDiv.innerHTML = "";
     }
 }
 
-
 function resetOrder() {
     document.getElementById("order").innerHTML = "";
-    document.querySelectorAll(".product img")[0].src = "images/white.jpeg";
-    document.querySelectorAll(".product img")[1].src = "images/pink.jpeg";
-    document.querySelectorAll(".product img")[2].src = "images/red.jpeg";
+    let defaultImages = ["images/white.jpeg", "images/pink.jpeg", "images/red.jpeg", "images/yellow.jpeg", "images/blue.jpeg"];
+    let images = document.querySelectorAll(".product img");
+
+    images.forEach((img, index) => {
+        img.src = defaultImages[index];
+    });
 }

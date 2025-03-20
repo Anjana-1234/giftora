@@ -4,29 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Valentines Flowers - Order your flowers online </title>
-    <link rel="stylesheet" href="../Tutorial_9/tutorial9.css">
+    <link rel="stylesheet" href="../OrderFlowers/tutorial9.css">
 </head>
 <body>
     <div class="container">
         <h1> Valentines Flowers </h1>
 
         <div class="product" id="product1">
-            <img src="../Tutorial_9/images/white.jpeg" alt="White Bouquet">
+            <img src="../OrderFlowers/images/white.jpeg" alt="White Bouquet">
             <div class="description">White Bouquet</div>
             <div class="price">£24</div>
         </div>
 
         <div class="product" id="product2">
-            <img src="../Tutorial_9/images/pink.jpeg" alt="Pink Bouquet">
+            <img src="../OrderFlowers/images/pink.jpeg" alt="Pink Bouquet">
             <div class="description">Pink Bouquet</div>
             <div class="price">£30</div>
         </div>
 
         <div class="product" id="product3">
-            <img src="../Tutorial_9/images/red.jpeg" alt="Red Bouquet">
+            <img src="../OrderFlowers/images/red.jpeg" alt="Red Bouquet">
             <div class="description">Red Bouquet</div>
             <div class="price">£35</div>
         </div>
+
+        <div class="product" id="product4">
+            <img src="../OrderFlowers/images/yellow.jpeg" alt="Yellow Bouquet">
+            <div class="description">Yellow Bouquet</div>
+            <div class="price">£42</div>
+        </div>
+
+        <div class="product" id="product5">
+            <img src="../OrderFlowers/images/blue.jpeg" alt="Blue Bouquet">
+            <div class="description">Blue Bouquet</div>
+            <div class="price">£28</div>
+        </div>
+
 
         <div class="labelOrder">
             Your Order:
@@ -54,6 +67,12 @@
 
                 <input type="radio" id="red" name="colour" value="red">
                 <label for="red">Red</label>
+
+                <input type="radio" id="yellow" name="colour" value="yellow">
+                <label for="yellow">Yellow</label>
+
+                <input type="radio" id="blue" name="colour" value="blue">
+                <label for="blue">Blue</label>
             </fieldset>
 
             <input type="button" value="Place your order" onclick="displayBouquet()" class="placeOrder">
@@ -62,6 +81,6 @@
 
     </div> <br><br><br>
 
-    <script src="../Tutorial_9/tutorial9.js"></script>
+    <script src="../OrderFlowers/tutorial9.js"></script>
 </body>
 </html>

@@ -115,3 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     renderProducts();
 });
+
+function toggleMenu() {
+    document.getElementById("navLinks").classList.toggle("show");
+}

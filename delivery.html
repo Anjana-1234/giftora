@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Delivery - Valentine's Flowers</title>
-  <link rel="stylesheet" href="shop.css" />
+  <link rel="stylesheet" href="shop.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
   <nav class="navbar">
     <div class="nav-logo">
-      <img src="./images/logo.jpg" alt="logo" id="logo-image" />
+      <img src="./images/logo.jpg" alt="logo" id="logo-image">
       Valentine's Flowers
     </div>
     <div class="hamburger" onclick="toggleMenu()">☰</div>
@@ -85,7 +85,6 @@
   <div id="confirmationModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
-      <img src="./images/order-confirmed.png" alt="Order confirmed" width="100">
       <h2>Thank You!</h2>
       <p>Your order has been placed successfully.</p>
       
@@ -108,11 +107,13 @@
     }
     
     // Set min date for delivery
-    const deliveryInput = document.getElementById("deliveryDate");
-    const today = new Date().toISOString().split("T")[0];
-    if (deliveryInput) {
-      deliveryInput.setAttribute("min", today);
-    }
+    document.addEventListener("DOMContentLoaded", function() {
+      const deliveryInput = document.getElementById("deliveryDate");
+      if (deliveryInput) {
+        const today = new Date().toISOString().split("T")[0];
+        deliveryInput.setAttribute("min", today);
+      }
+    });
   </script>
 </body>
 </html>

@@ -1,4 +1,5 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
+    // Get cart data from localStorage
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const champagneAdded = JSON.parse(localStorage.getItem("champagne")) || false;
     const cartSummaryDiv = document.getElementById("cartSummary");
@@ -13,10 +14,13 @@ document.addEventListener("DOMContentLoaded", function () {
         cartSummaryDiv.innerHTML = "";
         let total = 0;
 
-        if (cart.length === 0) {
-            window.location.href = "cart.html";
-            return;
-        }
+        // if (cart.length === 0) {
+        //     // Redirect to cart if empty
+        //     setTimeout(() => {
+        //         window.location.href = "cart.html";
+        //     }, 1500);
+        //     return;
+        // }
 
         cart.forEach(item => {
             const itemTotal = item.price * item.quantity;
@@ -49,25 +53,27 @@ document.addEventListener("DOMContentLoaded", function () {
         totalPriceEl.textContent = `£${total.toFixed(2)}`;
     }
 
-    // Form submission
-    deliveryForm.addEventListener("submit", function(e) {
-        e.preventDefault();
-        
-        // Validate form
-        const name = document.getElementById("name").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const phone = document.getElementById("phone").value.trim();
-        const address = document.getElementById("address").value.trim();
-        const deliveryDate = document.getElementById("deliveryDate").value;
-        
-        if (!name || !email || !phone || !address || !deliveryDate) {
-            alert("Please fill in all required fields");
-            return;
-        }
-        
-        // Show confirmation modal
-        showOrderConfirmation(name, email, phone, address, deliveryDate);
-    });
+    // Form submission handler
+    if (deliveryForm) {
+        deliveryForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            // Validate form
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const address = document.getElementById("address").value.trim();
+            const deliveryDate = document.getElementById("deliveryDate").value;
+            
+            if (!name || !email || !phone || !address || !deliveryDate) {
+                alert("Please fill in all required fields");
+                return;
+            }
+            
+            // Show confirmation modal
+            showOrderConfirmation(name, email, phone, address, deliveryDate);
+        });
+    }
 
     // Show order confirmation
     function showOrderConfirmation(name, email, phone, address, deliveryDate) {
@@ -141,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     window.closeModal = function() {
-        confirmationModal.style.display = "none";
+        document.getElementById("confirmationModal").style.display = "none";
     };
 
     // Close modal when clicking outside

@@ -215,6 +215,7 @@ button:hover {
 .cart-items {
     flex: 2;
     min-width: 300px;
+
 }
 
 .cart-item {
@@ -224,6 +225,7 @@ button:hover {
     padding: 15px;
     background: white;
     border-radius: 10px;
+    border: 2px solid rgb(212, 41, 121);
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     margin-bottom: 15px;
     position: relative;
@@ -292,10 +294,13 @@ button:hover {
 }
 
 .order-summary {
+    width: 40%;
+    margin: 20px auto;
     flex: 1;
     background: white;
     padding: 20px;
     border-radius: 10px;
+    border: 2px solid rgb(212, 41, 121);
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     height: fit-content;
     position: sticky;
@@ -368,10 +373,13 @@ button:hover {
 }
 
 .delivery-form {
+    width: 80%;
+    margin: 20px auto;
     flex: 2;
-    background: white;
+    background: rgb(245, 226, 236);
     padding: 30px;
     border-radius: 10px;
+    border: 1px solid #a02663;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     min-width: 300px;
 }
@@ -605,6 +613,7 @@ button:hover {
     .order-summary {
         position: static;
         margin-top: 30px;
+        border: 2px solis rgb(212, 41, 121);
     }
 
     .cart-item {

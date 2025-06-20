@@ -21,7 +21,13 @@
     </ul>
   </nav>
 
-  <div class="delivery-container">
+  <div id="emptyCartMessage" class="empty-cart-message">
+    <h2>Your cart is empty</h2>
+    <p>Please add items to your cart before proceeding to delivery</p>
+    <button onclick="window.location.href='shop.html'">Back to Shop</button>
+  </div>
+
+  <div id="deliveryContent" class="delivery-content">
     <div class="delivery-form">
       <h1>Delivery Details</h1>
       
@@ -68,6 +74,20 @@
           <textarea id="instructions" rows="2" placeholder="e.g., Leave with neighbor if not home"></textarea>
         </div>
         
+        <div class="form-group">
+          <label>Payment Method*</label>
+          <div class="payment-options">
+            <label class="payment-option">
+              <input type="radio" name="payment" value="online" required checked>
+              <span>Online Payment</span>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="payment" value="cash">
+              <span>Cash on Delivery</span>
+            </label>
+          </div>
+        </div>
+        
         <button type="submit" class="submit-btn">Place Order</button>
       </form>
     </div>
@@ -84,45 +104,46 @@
   <!-- Confirmation Modal -->
   <div id="confirmationModal" class="modal">
     <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <h2>Thank You!</h2>
-    <p>Your order has been placed successfully.</p>
-    
-    <div class="order-details">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Thank You!</h2>
+      <p>Your order has been placed successfully.</p>
+      
+      <div class="order-details">
         <div class="customer-info">
-            <h3>Customer Details</h3>
-            <p><strong>Email:</strong> <span id="confirmEmail"></span></p>
-            <p><strong>Phone:</strong> <span id="confirmPhone"></span></p>
+          <h3>Customer Details</h3>
+          <p><strong>Email:</strong> <span id="confirmEmail"></span></p>
+          <p><strong>Phone:</strong> <span id="confirmPhone"></span></p>
         </div>
         
         <div class="delivery-info">
-            <h3>Delivery Information</h3>
-            <p><strong>Address:</strong> <span id="confirmAddress"></span></p>
-            <p><strong>Date:</strong> <span id="confirmDate"></span></p>
-            <p><strong>Time:</strong> <span id="confirmTime"></span></p>
-            <p id="confirmInstructions" style="display: none;">
-                <strong>Instructions:</strong> <span id="instructionsText"></span>
-            </p>
+          <h3>Delivery Information</h3>
+          <p><strong>Address:</strong> <span id="confirmAddress"></span></p>
+          <p><strong>Date:</strong> <span id="confirmDate"></span></p>
+          <p><strong>Time:</strong> <span id="confirmTime"></span></p>
+          <p><strong>Payment Method:</strong> <span id="confirmPayment"></span></p>
+          <p id="confirmInstructions" style="display: none;">
+            <strong>Instructions:</strong> <span id="instructionsText"></span>
+          </p>
         </div>
         
         <div class="order-items">
-            <h3>Order Items</h3>
-            <div id="orderItemsList"></div>
+          <h3>Order Items</h3>
+          <div id="orderItemsList"></div>
         </div>
         
         <div class="order-total">
-            <p><strong>Total:</strong> <span id="confirmTotal"></span></p>
+          <p><strong>Total:</strong> <span id="confirmTotal"></span></p>
         </div>
-    </div>
-    
-    <div class="order-number">
+      </div>
+      
+      <div class="order-number">
         <p>Order #: <span id="orderNumber"></span></p>
-    </div>
-    
-    <button onclick="window.location.href='shop.html'" class="continue-shopping">
+      </div>
+      
+      <button onclick="window.location.href='shop.html'" class="continue-shopping">
         Continue Shopping
-    </button>
-</div>
+      </button>
+    </div>
   </div>
 
   <script src="delivery.js"></script>

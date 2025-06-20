@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const phone = document.getElementById("phone").value.trim();
         const address = document.getElementById("address").value.trim();
         const deliveryDate = document.getElementById("deliveryDate").value;
+        const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
         
         if (!name || !email || !phone || !address || !deliveryDate) {
             alert("Please fill in all required fields");
@@ -101,11 +102,11 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         
         // Show confirmation modal
-        showOrderConfirmation(name, email, phone, address, deliveryDate);
+        showOrderConfirmation(name, email, phone, address, deliveryDate, paymentMethod);
     });
 
     // Show order confirmation modal
-    function showOrderConfirmation(name, email, phone, address, deliveryDate) {
+    function showOrderConfirmation(name, email, phone, address, deliveryDate, paymentMethod) {
         const deliveryTime = document.getElementById("deliveryTime").value;
         const instructions = document.getElementById("instructions").value;
         
@@ -119,6 +120,8 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("confirmAddress").textContent = address;
         document.getElementById("confirmDate").textContent = formatDate(deliveryDate);
         document.getElementById("confirmTime").textContent = getTimeText(deliveryTime);
+        document.getElementById("confirmPayment").textContent = 
+            paymentMethod === "online" ? "Online Payment" : "Cash on Delivery";
         document.getElementById("confirmTotal").textContent = totalPriceEl.textContent;
         
         // Handle special instructions

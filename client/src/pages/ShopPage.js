@@ -35,7 +35,7 @@ function ShopPage() {
   return (
     <div style={{ padding: '30px' }}>
 
-      <h1 style={{ color: '#e91e8c', textAlign: 'center' }}>Order Now! 🌺</h1>
+      <h1 style={{ color: '#e91e8c', textAlign: 'center' }}>Order Now! </h1>
 
       {/* Filter and Sort controls */}
       <div style={{
@@ -92,7 +92,7 @@ function ShopPage() {
             fontSize: '16px',
             fontWeight: 'bold'
           }}>
-            🎁 Add Gift Items
+             Add Gift Items
           </button>
         </Link>
       </div>

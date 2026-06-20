@@ -19,7 +19,7 @@ function GiftsPage() {
         flexWrap: 'wrap',
         gap: '10px'
       }}>
-        <h1 style={{ color: '#e91e8c', margin: 0 }}>Gift Items 🎁</h1>
+        <h1 style={{ color: '#e91e8c', margin: 0 }}>Gift Items </h1>
 
         {/* Link back to shop page */}
         <Link to="/shop">

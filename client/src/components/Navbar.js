@@ -1,8 +1,15 @@
 // Import Link from react-router-dom for navigation between pages
 import { Link } from 'react-router-dom';
 
+// Import useCart hook to access live cart count
+import { useCart } from '../context/CartContext';
+
 // Navbar component - shows at top of every page
 function Navbar() {
+
+  // Get cart count from context to show on the Cart badge
+  const { getCartCount } = useCart();
+
   return (
     // Main navbar container with pink background
     <nav style={{
@@ -39,14 +46,14 @@ function Navbar() {
           Shop
         </Link>
 
-        {/* Cart link */}
+        {/* Cart link - shows live item count when cart has items */}
         <Link to="/cart" style={{
           color: 'white',
           textDecoration: 'none',
           fontSize: '16px',
           fontWeight: '500'
         }}>
-          Cart 🛒
+          Cart 🛒 {getCartCount() > 0 && `(${getCartCount()})`}
         </Link>
 
         {/* Login link */}

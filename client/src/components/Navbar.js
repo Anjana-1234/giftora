@@ -4,11 +4,17 @@ import { Link } from 'react-router-dom';
 // Import useCart hook to access live cart count
 import { useCart } from '../context/CartContext';
 
+// Import useAuth hook to access login state
+import { useAuth } from '../context/AuthContext';
+
 // Navbar component - shows at top of every page
 function Navbar() {
 
   // Get cart count from context to show on the Cart badge
   const { getCartCount } = useCart();
+
+  // Get the logged-in user (or null) and the logout function
+  const { user, logout } = useAuth();
 
   return (
     // Main navbar container with pink background
@@ -34,7 +40,7 @@ function Navbar() {
       </div>
 
       {/* Right side - Navigation links */}
-      <div style={{ display: 'flex', gap: '30px' }}>
+      <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
 
         {/* Shop link */}
         <Link to="/shop" style={{
@@ -56,15 +62,35 @@ function Navbar() {
           Cart 🛒 {getCartCount() > 0 && `(${getCartCount()})`}
         </Link>
 
-        {/* Login link */}
-        <Link to="/login" style={{
-          color: 'white',
-          textDecoration: 'none',
-          fontSize: '16px',
-          fontWeight: '500'
-        }}>
-          Login
-        </Link>
+        {/* Shows "Hi, [name]" + Logout if logged in, otherwise shows Login link */}
+        {user ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <span style={{ color: 'white', fontSize: '15px' }}>Hi, {user.name}</span>
+            <button
+              onClick={logout}
+              style={{
+                background: 'transparent',
+                border: '1px solid white',
+                color: 'white',
+                padding: '6px 14px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link to="/login" style={{
+            color: 'white',
+            textDecoration: 'none',
+            fontSize: '16px',
+            fontWeight: '500'
+          }}>
+            Login
+          </Link>
+        )}
 
       </div>
     </nav>

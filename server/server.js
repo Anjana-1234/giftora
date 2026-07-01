@@ -22,6 +22,9 @@ const stripeRoutes = require('./routes/stripeRoutes');
 // Import our auth routes
 const authRoutes = require('./routes/authRoutes');
 
+// Import our admin routes 
+const adminRoutes = require('./routes/adminRoutes');
+
 // Create the express app
 const app = express();
 
@@ -51,6 +54,9 @@ app.use('/api/stripe', stripeRoutes);
 
 //Tell expressto use our auth routes for any URL starting with /api/auth
 app.use('/api/auth', authRoutes);
+
+// Tell express to use our admin routes for any URL starting with /api/admin
+app.use('/api/admin', adminRoutes);
 
 // A simple test route - visiting this in browser confirms server works
 app.get('/', (req, res) => {

@@ -20,6 +20,7 @@ import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
             <Route path="/payment-success" element={<PaymentSuccessPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/admin" element={<AdminPage />} />
           </Routes>
 
         </BrowserRouter>

@@ -1,7 +1,6 @@
 // Import mongoose to define our schema
 const mongoose = require('mongoose');
 
-// Define what one user document looks like in MongoDB
 const userSchema = new mongoose.Schema({
 
   // User's full name
@@ -10,12 +9,12 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 
-  // Email - must be unique so two accounts can't share one email
+  // Email - must be unique
   email: {
     type: String,
     required: true,
     unique: true,
-    lowercase: true, // always store emails in lowercase to avoid duplicates like Test@x.com vs test@x.com
+    lowercase: true,
   },
 
   // Hashed password - we NEVER store the plain text password
@@ -24,11 +23,15 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 
+  // Whether this user has admin privileges
+  // Regular signups get false by default - only manually set to true in DB
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+
 }, {
-  // Adds createdAt and updatedAt automatically
   timestamps: true,
 });
 
-// Create and export the User model
-// Mongoose will create a "users" collection in MongoDB
 module.exports = mongoose.model('User', userSchema);

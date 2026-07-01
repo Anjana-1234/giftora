@@ -66,6 +66,19 @@ function Navbar() {
         {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             <span style={{ color: 'white', fontSize: '15px' }}>Hi, {user.name}</span>
+            {/* Only show Admin link if the user is an admin */}
+            {user.isAdmin && (
+              <Link to="/admin" style={{
+                color: 'white',
+                textDecoration: 'none',
+                fontSize: '14px',
+                border: '1px solid white',
+                padding: '4px 10px',
+                borderRadius: '6px'
+              }}>
+                Admin
+              </Link>
+            )}
             <button
               onClick={logout}
               style={{

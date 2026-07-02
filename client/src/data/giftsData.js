@@ -15,7 +15,7 @@ import teddybearBlue from '../assets/gifts/teddybear-blue.jpg';
 import teddybearGrey from '../assets/gifts/teddybear--grey.jpg';
 import teddybearPink from '../assets/gifts/teddybear-pink.jpg';
 import teddybearPurple from '../assets/gifts/teddybear-purple.webp';
-import teddybearRed from '../assets/gifts/teddybear-red.jpg';
+import teddybearRed from '../assets/gifts/teddybear-red.jpeg';
 import teddybearWhite from '../assets/gifts/teddybear-white.jpg';
 import teddybearYellow from '../assets/gifts/teddybear-yellow.jpg';
 import tumbler from '../assets/gifts/tumbler.webp';
@@ -38,7 +38,7 @@ const giftImages = {
   'teddybear--grey.jpg': teddybearGrey,
   'teddybear-pink.jpg': teddybearPink,
   'teddybear-purple.webp': teddybearPurple,
-  'teddybear-red.jpg': teddybearRed,
+  'teddybear-red.jpeg': teddybearRed,
   'teddybear-white.jpg': teddybearWhite,
   'teddybear-yellow.jpg': teddybearYellow,
   'tumbler.webp': tumbler,

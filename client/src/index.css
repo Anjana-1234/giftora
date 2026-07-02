@@ -5,16 +5,25 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Arial', sans-serif;
+  background-color: #ffffff;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* Make images responsive by default */
+img {
+  max-width: 100%;
+  height: auto;
 }
 
-body {
-  font-family: Arial, sans-serif;
-  background-color: #eeb3c6;
+/* Make inputs full width on mobile */
+input, textarea, select {
+  max-width: 100%;
+}
+
+/* Responsive grid helper used across shop and gifts pages */
+@media (max-width: 600px) {
+  /* Stack flex items vertically on small screens */
+  .flex-wrap {
+    flex-direction: column;
+  }
 }

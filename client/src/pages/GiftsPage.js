@@ -34,8 +34,9 @@ function GiftsPage() {
         // Attach the correct image to each gift using our image map
         const giftsWithImages = response.data.map((gift) => ({
           ...gift,
-          id: gift._id, // rename MongoDB's _id to id for consistency
+          id: gift._id,
           image: giftImages[gift.image],
+          description: gift.description, // pass description for the modal
         }));
 
         setGifts(giftsWithImages);
@@ -79,7 +80,7 @@ function GiftsPage() {
         flexWrap: 'wrap',
         gap: '10px'
       }}>
-        <h1 style={{ color: '#e91e8c', margin: 0 }}>Gift Items </h1>
+        <h1 style={{ color: '#a13f75', margin: 0 }}>Gift Collection</h1>
 
         <Link to="/shop">
           <button style={{
@@ -98,7 +99,7 @@ function GiftsPage() {
       </div>
 
       <p style={{ textAlign: 'center', color: '#666', marginBottom: '30px' }}>
-        Add a little extra to your bouquet — pick one or more gifts below.
+        Add a little extra to your bouquet - pick one or more gifts below.
       </p>
 
       <div style={{

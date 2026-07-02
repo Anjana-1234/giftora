@@ -147,7 +147,7 @@ function CheckoutPage() {
             padding: '4px 0'
           }}>
             <span>{item.name} × {item.quantity}</span>
-            <span>£{(item.price * item.quantity).toFixed(2)}</span>
+            <span>Rs. {(item.price * item.quantity).toLocaleString()}</span>
           </div>
         ))}
         <div style={{
@@ -159,7 +159,7 @@ function CheckoutPage() {
           borderTop: '1px solid #e91e8c'
         }}>
           <span>Total</span>
-          <span>£{getCartTotal().toFixed(2)}</span>
+          <span>Rs. {getCartTotal().toLocaleString()}</span>
         </div>
       </div>
 

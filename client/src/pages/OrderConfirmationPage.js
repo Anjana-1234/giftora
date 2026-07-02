@@ -96,7 +96,7 @@ function OrderConfirmationPage() {
             padding: '4px 0'
           }}>
             <span>{item.name} × {item.quantity}</span>
-            <span>£{(item.price * item.quantity).toFixed(2)}</span>
+            <span>Rs. {(item.price * item.quantity).toLocaleString()}</span>
           </div>
         ))}
 
@@ -109,7 +109,7 @@ function OrderConfirmationPage() {
           borderTop: '1px solid #e91e8c'
         }}>
           <span>Total Paid</span>
-          <span>£{order.totalAmount.toFixed(2)}</span>
+          <span>Rs. {order.totalAmount.toLocaleString()}</span>
         </div>
       </div>
 

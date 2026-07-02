@@ -16,12 +16,18 @@ router.post('/create-checkout-session', async (req, res) => {
     // We convert our cart items into that format
     const line_items = items.map((item) => ({
       price_data: {
-        currency: 'gbp', // British pounds, matching your £ prices
+        // Note: LKR is not supported by Stripe
+        // Using GBP for test mode - in a real deployment you would
+        // convert LKR to a supported currency like USD before charging
+        currency: 'gbp',
         product_data: {
           name: item.name, // shows on Stripe's checkout page
         },
-        // Stripe expects the amount in pence, not pounds (£1 = 100)
-        unit_amount: Math.round(item.price * 100),
+        // Stripe expects the amount in the smallest currency unit
+        // For GBP: pence (£1 = 100 pence)
+        // We divide by 100 to get a reasonable GBP amount from LKR prices
+        // e.g. Rs.1800 becomes £18.00 on Stripe checkout
+        unit_amount: Math.round(item.price),
       },
       quantity: item.quantity,
     }));
@@ -32,7 +38,6 @@ router.post('/create-checkout-session', async (req, res) => {
       line_items: line_items,
       mode: 'payment',
       // Where Stripe sends the user if payment succeeds
-      // {CHECKOUT_SESSION_ID} gets replaced automatically by Stripe
       success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       // Where Stripe sends the user if they cancel
       cancel_url: `${process.env.CLIENT_URL}/cart`,

@@ -1,71 +1,201 @@
-// Import useCart hook to access addToCart function
+import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 
-// FlowerCard displays one bouquet with image, name, price, and Add to cart button
-// It receives "flower" data as a prop from the parent (ShopPage)
 function FlowerCard({ flower }) {
 
-  // Get the addToCart function from our shared cart context
   const { addToCart } = useCart();
+  const [showModal, setShowModal] = useState(false);
 
-  // This runs when user clicks "Add to cart"
   function handleAddToCart() {
     addToCart({
       id: flower.id,
       name: flower.name,
       price: flower.price,
       image: flower.image,
-      type: 'flower', // helps us tell flowers apart from gifts later
+      type: 'flower',
     });
   }
 
   return (
-    <div style={{
-      border: '1px solid #f0c0d8',
-      borderRadius: '12px',
-      padding: '15px',
-      textAlign: 'center',
-      backgroundColor: 'white'
-    }}>
+    <>
+      {/* Flower card */}
+      <div style={{
+        border: '1px solid #f0c0d8',
+        borderRadius: '12px',
+        padding: '15px',
+        textAlign: 'center',
+        backgroundColor: 'white'
+      }}>
 
-      {/* Bouquet image */}
-      <img
-        src={flower.image}
-        alt={flower.name}
-        style={{
-          width: '100%',
-          height: '180px',
-          objectFit: 'cover',
-          borderRadius: '8px',
-          marginBottom: '10px'
-        }}
-      />
+        {/* Clicking image shows modal */}
+        <div
+          onClick={() => setShowModal(true)}
+          style={{ cursor: 'pointer', position: 'relative' }}
+          title="Click to see details"
+        >
+          <img
+            src={flower.image}
+            alt={flower.name}
+            style={{
+              width: '100%',
+              height: '180px',
+              objectFit: 'cover',
+              borderRadius: '8px',
+              marginBottom: '10px'
+            }}
+          />
+          <span style={{
+            position: 'absolute',
+            top: '8px',
+            right: '8px',
+            backgroundColor: '#e91e8c',
+            color: 'white',
+            borderRadius: '50%',
+            width: '22px',
+            height: '22px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '12px',
+            fontWeight: 'bold'
+          }}>
+            i
+          </span>
+        </div>
 
-      {/* Bouquet name */}
-      <h3 style={{ color: '#e91e8c', margin: '5px 0' }}>{flower.name}</h3>
+        <h3 style={{ color: '#e91e8c', margin: '5px 0', fontSize: '14px' }}>
+          {flower.name}
+        </h3>
 
-      {/* Bouquet price */}
-      <p style={{ fontSize: '18px', fontWeight: 'bold', margin: '5px 0' }}>
-        £{flower.price}
-      </p>
+        <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '5px 0' }}>
+          Rs. {flower.price.toLocaleString()}
+        </p>
 
-      {/* Add to cart button */}
-      <button
-        onClick={handleAddToCart}
-        style={{
-          backgroundColor: '#e91e8c',
-          color: 'white',
-          border: 'none',
-          padding: '10px 20px',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          width: '100%',
-          fontSize: '14px'
-        }}
-      >
-        Add to cart
-      </button>
-    </div>
+        <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+          <button
+            onClick={() => setShowModal(true)}
+            style={{
+              flex: 1,
+              backgroundColor: 'white',
+              color: '#e91e8c',
+              border: '1px solid #e91e8c',
+              padding: '8px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '13px'
+            }}
+          >
+            Details
+          </button>
+          <button
+            onClick={handleAddToCart}
+            style={{
+              flex: 2,
+              backgroundColor: '#e91e8c',
+              color: 'white',
+              border: 'none',
+              padding: '8px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '13px'
+            }}
+          >
+            Add to cart
+          </button>
+        </div>
+      </div>
+
+      {/* Description modal */}
+      {showModal && (
+        <div
+          onClick={() => setShowModal(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '20px'
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              padding: '25px',
+              maxWidth: '400px',
+              width: '100%',
+              position: 'relative'
+            }}
+          >
+            <button
+              onClick={() => setShowModal(false)}
+              style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                background: 'transparent',
+                border: 'none',
+                fontSize: '20px',
+                cursor: 'pointer',
+                color: '#999'
+              }}
+            >
+              ✕
+            </button>
+
+            <img
+              src={flower.image}
+              alt={flower.name}
+              style={{
+                width: '100%',
+                height: '200px',
+                objectFit: 'cover',
+                borderRadius: '8px',
+                marginBottom: '15px'
+              }}
+            />
+
+            <h2 style={{ color: '#e91e8c', margin: '0 0 8px 0', fontSize: '18px' }}>
+              {flower.name}
+            </h2>
+
+            <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#333', margin: '0 0 12px 0' }}>
+              Rs. {flower.price.toLocaleString()}
+            </p>
+
+            {flower.description && (
+              <p style={{ color: '#555', fontSize: '14px', lineHeight: '1.6', margin: '0 0 20px 0' }}>
+                {flower.description}
+              </p>
+            )}
+
+            <button
+              onClick={() => { handleAddToCart(); setShowModal(false); }}
+              style={{
+                width: '100%',
+                backgroundColor: '#e91e8c',
+                color: 'white',
+                border: 'none',
+                padding: '12px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '15px',
+                fontWeight: 'bold'
+              }}
+            >
+              Add to cart
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

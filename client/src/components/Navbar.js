@@ -1,5 +1,5 @@
 // Import Link from react-router-dom for navigation between pages
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'; 
 
 // Import useCart hook to access live cart count
 import { useCart } from '../context/CartContext';
@@ -7,7 +7,9 @@ import { useCart } from '../context/CartContext';
 // Import useAuth hook to access login state
 import { useAuth } from '../context/AuthContext';
 
-// Navbar component - shows at top of every page
+// Import the Giftora logo
+import logo from '../assets/logo.png';
+
 function Navbar() {
 
   // Get cart count from context to show on the Cart badge
@@ -20,64 +22,77 @@ function Navbar() {
   const isAdmin = user && (user.isAdmin === true);
 
   return (
-    // Main navbar container with pink background
     <nav style={{
       backgroundColor: '#e91e8c',
-      padding: '15px 30px',
+      padding: '12px 30px',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center'
     }}>
 
-      {/* Left side - Logo and shop name */}
+      {/* Left side - Logo image and shop name */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <span style={{ fontSize: '24px' }}>🌸</span>
+        <img
+          src={logo}
+          alt="Giftora Logo"
+          style={{
+            height: '45px',
+            width: '45px',
+            objectFit: 'contain',
+            borderRadius: '50%',
+            backgroundColor: 'white',
+            padding: '2px'
+          }}
+        />
         <Link to="/" style={{
           color: 'white',
           textDecoration: 'none',
           fontSize: '22px',
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          letterSpacing: '1px'
         }}>
-          Valentine's Flowers
+          Giftora
         </Link>
       </div>
 
       {/* Right side - Navigation links */}
-      <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: '25px', alignItems: 'center' }}>
 
-        {/* Shop link */}
         <Link to="/shop" style={{
           color: 'white',
           textDecoration: 'none',
-          fontSize: '16px',
+          fontSize: '15px',
           fontWeight: '500'
         }}>
           Shop
         </Link>
 
-        {/* Cart link - shows live item count when cart has items */}
+        <Link to="/gifts" style={{
+          color: 'white',
+          textDecoration: 'none',
+          fontSize: '15px',
+          fontWeight: '500'
+        }}>
+          Gifts
+        </Link>
+
         <Link to="/cart" style={{
           color: 'white',
           textDecoration: 'none',
-          fontSize: '16px',
+          fontSize: '15px',
           fontWeight: '500'
         }}>
           Cart 🛒 {getCartCount() > 0 && `(${getCartCount()})`}
         </Link>
 
-        {/* Shows "Hi, [name]" + Admin + Logout if logged in, otherwise shows Login link */}
         {user ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-
-            {/* Greeting */}
-            <span style={{ color: 'white', fontSize: '15px' }}>Hi, {user.name}</span>
-
-            {/* Admin button - only visible if isAdmin is exactly true */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ color: 'white', fontSize: '14px' }}>Hi, {user.name}</span>
             {isAdmin && (
               <Link to="/admin" style={{
                 color: 'white',
                 textDecoration: 'none',
-                fontSize: '14px',
+                fontSize: '13px',
                 border: '1px solid white',
                 padding: '4px 10px',
                 borderRadius: '6px',
@@ -86,29 +101,26 @@ function Navbar() {
                 ⚙️ Admin
               </Link>
             )}
-
-            {/* Logout button */}
             <button
               onClick={logout}
               style={{
                 background: 'transparent',
                 border: '1px solid white',
                 color: 'white',
-                padding: '6px 14px',
+                padding: '5px 12px',
                 borderRadius: '6px',
                 cursor: 'pointer',
-                fontSize: '14px'
+                fontSize: '13px'
               }}
             >
               Logout
             </button>
-
           </div>
         ) : (
           <Link to="/login" style={{
             color: 'white',
             textDecoration: 'none',
-            fontSize: '16px',
+            fontSize: '15px',
             fontWeight: '500'
           }}>
             Login
@@ -120,5 +132,4 @@ function Navbar() {
   );
 }
 
-// Export so other files can use this component
 export default Navbar;

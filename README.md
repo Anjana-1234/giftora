@@ -1,4 +1,4 @@
-# Valentine's Flowers 
+# GiftOra 
 
 An online flower bouquet ordering website, originally built as one of my first web development projects and later rebuilt as a full-stack application to apply new skills and add real-world features.
 

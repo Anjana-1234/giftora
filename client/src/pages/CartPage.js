@@ -118,7 +118,7 @@ function CartPage() {
 
             {/* Price for this line (price × quantity) */}
             <div style={{ fontWeight: 'bold', minWidth: '70px', textAlign: 'right' }}>
-              £{(item.price * item.quantity).toFixed(2)}
+              Rs. {(item.price * item.quantity).toLocaleString()}
             </div>
 
             {/* Remove button */}
@@ -150,7 +150,7 @@ function CartPage() {
         borderTop: '2px solid #e91e8c'
       }}>
         <h2 style={{ color: '#333', margin: 0 }}>Total:</h2>
-        <h2 style={{ color: '#e91e8c', margin: 0 }}>£{getCartTotal().toFixed(2)}</h2>
+        <h2 style={{ color: '#e91e8c', margin: 0 }}>Rs. {getCartTotal().toLocaleString()}</h2>
       </div>
 
       {/* Checkout button - navigates to the checkout form page */}

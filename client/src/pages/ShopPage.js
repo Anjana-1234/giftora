@@ -43,8 +43,9 @@ function ShopPage() {
         // We map over it to attach the correct image using our image map
         const flowersWithImages = response.data.map((flower) => ({
           ...flower,
-          id: flower._id, // MongoDB uses _id, we rename it to id for consistency
-          image: flowerImages[flower.image], // look up actual image using filename
+          id: flower._id,
+          image: flowerImages[flower.image],
+          description: flower.description, // pass description for the modal
         }));
 
         setFlowers(flowersWithImages);
@@ -93,7 +94,7 @@ function ShopPage() {
   return (
     <div style={{ padding: '30px' }}>
 
-      <h1 style={{ color: '#e91e8c', textAlign: 'center' }}>Order Now! 🌺</h1>
+      <h1 style={{ color: '#a13f75', textAlign: 'center' }}>Our Flower Collection</h1>
 
       {/* Filter and Sort controls */}
       <div style={{
@@ -119,12 +120,18 @@ function ShopPage() {
           <label style={{ marginRight: '8px', fontWeight: 'bold', color: '#e91e8c' }}>
             Filter by Color:
           </label>
-          <select value={colorFilter} onChange={(e) => setColorFilter(e.target.value)}>
+          <select
+            value={colorFilter}
+            onChange={(e) => setColorFilter(e.target.value)}
+          >
             <option value="All">All</option>
-            <option value="White">White</option>
-            <option value="Pink">Pink</option>
             <option value="Red">Red</option>
+            <option value="Pink">Pink</option>
+            <option value="White">White</option>
             <option value="Yellow">Yellow</option>
+            <option value="Blue">Blue</option>
+            <option value="Purple">Purple</option>
+            <option value="Mixed">Mixed</option>
           </select>
         </div>
       </div>

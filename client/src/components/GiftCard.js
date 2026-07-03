@@ -53,7 +53,7 @@ function GiftCard({ gift }) {
             position: 'absolute',
             top: '8px',
             right: '8px',
-            backgroundColor: '#e91e8c',
+            backgroundColor: '#8d2c61',
             color: 'white',
             borderRadius: '50%',
             width: '22px',
@@ -68,7 +68,7 @@ function GiftCard({ gift }) {
           </span>
         </div>
 
-        <h3 style={{ color: '#e91e8c', margin: '5px 0', fontSize: '14px' }}>
+        <h3 style={{ color: '#961e60', margin: '5px 0', fontSize: '14px' }}>
           {gift.name}
         </h3>
 
@@ -83,8 +83,8 @@ function GiftCard({ gift }) {
             style={{
               flex: 1,
               backgroundColor: 'white',
-              color: '#e91e8c',
-              border: '1px solid #e91e8c',
+              color: '#752e55',
+              border: '1px solid #8f446d',
               padding: '8px',
               borderRadius: '8px',
               cursor: 'pointer',
@@ -99,7 +99,7 @@ function GiftCard({ gift }) {
             onClick={handleAddToCart}
             style={{
               flex: 2,
-              backgroundColor: '#e91e8c',
+              backgroundColor: '#883c66',
               color: 'white',
               border: 'none',
               padding: '8px',
@@ -172,7 +172,7 @@ function GiftCard({ gift }) {
               }}
             />
 
-            <h2 style={{ color: '#e91e8c', margin: '0 0 8px 0', fontSize: '18px' }}>
+            <h2 style={{ color: '#9b2a68', margin: '0 0 8px 0', fontSize: '18px' }}>
               {gift.name}
             </h2>
 
@@ -188,7 +188,7 @@ function GiftCard({ gift }) {
               onClick={() => { handleAddToCart(); setShowModal(false); }}
               style={{
                 width: '100%',
-                backgroundColor: '#e91e8c',
+                backgroundColor: '#97386c',
                 color: 'white',
                 border: 'none',
                 padding: '12px',

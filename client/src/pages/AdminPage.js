@@ -144,8 +144,8 @@ function AdminPage() {
   return (
     <div style={{ padding: '30px', maxWidth: '1200px', margin: '0 auto' }}>
 
-      <h1 style={{ color: '#e91e8c', marginBottom: '5px' }}>Admin Dashboard 🌸</h1>
-      <p style={{ color: '#666', marginBottom: '25px' }}>Welcome back, {user?.name}</p>
+      <h1 style={{ color: '#a13f75', marginBottom: '5px' }}>Admin Dashboard </h1>
+      <p style={{ color: '#524f4f', marginBottom: '25px' }}>Welcome back, {user?.name}</p>
 
       {/* Tab navigation */}
       <div style={{

@@ -1,20 +1,17 @@
-// Import axios to make HTTP requests
 import axios from 'axios';
 
-// Create a pre-configured axios instance pointing to our backend server
+// In production this will be the Render URL
+// In development it falls back to localhost:5000
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
 });
 
-// This runs before EVERY request made using "api"
-// It automatically attaches the saved JWT token (if one exists) to the request headers
+// Automatically attach JWT token to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
-
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
   return config;
 });
 

@@ -38,7 +38,7 @@ function CartPage() {
   return (
     <div style={{ padding: '30px', maxWidth: '700px', margin: '0 auto' }}>
 
-      <h1 style={{ color: '#e91e8c', textAlign: 'center' }}>Your Cart 🛒</h1>
+      <h1 style={{ color: '#a13f75', textAlign: 'center' }}>Your Cart </h1>
 
       {/* List of cart items */}
       <div style={{ marginTop: '20px' }}>

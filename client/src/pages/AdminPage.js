@@ -43,7 +43,7 @@ function AdminPage() {
     if (!user) { navigate('/login'); return; }
     if (!user.isAdmin) { navigate('/'); return; }
     fetchAllData();
-  }, [user]);
+  }, [user, navigate]);
 
   async function fetchAllData() {
     try {
@@ -331,7 +331,7 @@ function AdminPage() {
                           backgroundColor: product.category === 'flower' ? '#fff0f5' : '#f0fff0',
                           color: product.category === 'flower' ? '#e91e8c' : '#2d6a2d',
                         }}>
-                          {product.category === 'flower' ? '🌸 Flower' : '🎁 Gift'}
+                          {product.category === 'flower' ? ' Flower' : ' Gift'}
                         </span>
                       </td>
                       <td style={tdStyle}>Rs. {product.price.toLocaleString()}</td>
@@ -587,8 +587,8 @@ function AdminPage() {
                   required
                   style={inputStyle}
                 >
-                  <option value="flower">🌸 Flower</option>
-                  <option value="gift">🎁 Gift</option>
+                  <option value="flower"> Flower</option>
+                  <option value="gift"> Gift</option>
                 </select>
               </label>
 

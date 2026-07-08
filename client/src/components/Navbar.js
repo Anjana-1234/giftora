@@ -21,13 +21,14 @@ function Navbar() {
 
   // Style for desktop nav links
   function navLinkStyle(path) {
+    
     return {
       color: isActive(path) ? '#e91e8c' : 'white',
       textDecoration: 'none',
       fontSize: '15px',
-      fontWeight: isActive(path) ? 'bold' : '500',
+      fontWeight: isActive(path) ? 'bold' : 'normal',
       padding: '6px 4px',
-      borderBottom: isActive(path) ? '2px solid white' : '2px solid transparent',
+      borderBottom: isActive(path) ? '3px solid white' : '3px solid transparent',
       transition: 'all 0.2s'
     };
   }

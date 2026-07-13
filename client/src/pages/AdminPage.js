@@ -8,11 +8,15 @@ const emptyForm = {
   name: '',
   price: '',
   image: '',
+  imageType: 'filename',
   category: 'flower',
   color: '',
   description: '',
   availableQuantity: '',
 };
+
+// Standard colors for the dropdown
+const standardColors = ['Red', 'Pink', 'White', 'Yellow', 'Blue', 'Purple', 'Mixed'];
 
 function AdminPage() {
 
@@ -25,17 +29,9 @@ function AdminPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Controls whether the Add/Edit modal is open
   const [showModal, setShowModal] = useState(false);
-
-  // null = adding new product, object = editing existing product
   const [editingProduct, setEditingProduct] = useState(null);
-
-  // Form data for Add/Edit modal
   const [form, setForm] = useState(emptyForm);
-
-  // Tracks form submission state
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formError, setFormError] = useState(null);
 
@@ -86,7 +82,6 @@ function AdminPage() {
     }
   }
 
-  // Opens modal for adding a new product
   function handleOpenAdd() {
     setEditingProduct(null);
     setForm(emptyForm);
@@ -94,13 +89,13 @@ function AdminPage() {
     setShowModal(true);
   }
 
-  // Opens modal pre-filled for editing an existing product
   function handleOpenEdit(product) {
     setEditingProduct(product);
     setForm({
       name: product.name,
       price: product.price,
       image: product.image,
+      imageType: product.image.startsWith('http') ? 'url' : 'filename',
       category: product.category,
       color: product.color || '',
       description: product.description || '',
@@ -110,12 +105,17 @@ function AdminPage() {
     setShowModal(true);
   }
 
-  // Handles form field changes
   function handleFormChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  // Submits the Add or Edit form
+  // Helper to get the color dropdown value
+  function getColorDropdownValue() {
+    if (!form.color) return '';
+    if (standardColors.includes(form.color)) return form.color;
+    return 'Other';
+  }
+
   async function handleFormSubmit(e) {
     e.preventDefault();
     setFormSubmitting(true);
@@ -123,14 +123,10 @@ function AdminPage() {
 
     try {
       if (editingProduct) {
-        // Edit existing product
         await api.put(`/admin/products/${editingProduct._id}`, form);
       } else {
-        // Add new product
         await api.post('/admin/products', form);
       }
-
-      // Refresh products list
       const response = await api.get('/admin/products');
       setProducts(response.data);
       setShowModal(false);
@@ -211,7 +207,7 @@ function AdminPage() {
   return (
     <div style={{ padding: '30px', maxWidth: '1200px', margin: '0 auto' }}>
 
-      <h1 style={{ color: '#e91e8c', marginBottom: '5px' }}>Admin Dashboard 🌸</h1>
+      <h1 style={{ color: '#7a3159', marginBottom: '5px' }}>Admin Dashboard</h1>
       <p style={{ color: '#666', marginBottom: '25px' }}>Welcome back, {user?.name}</p>
 
       {/* Tab navigation */}
@@ -277,8 +273,6 @@ function AdminPage() {
       {/* ── PRODUCTS TAB ── */}
       {activeTab === 'products' && (
         <div>
-
-          {/* Header with Add Product button */}
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -332,7 +326,7 @@ function AdminPage() {
                           backgroundColor: product.category === 'flower' ? '#fff0f5' : '#f0fff0',
                           color: product.category === 'flower' ? '#e91e8c' : '#2d6a2d',
                         }}>
-                          {product.category === 'flower' ? '🌸 Flower' : '🎁 Gift'}
+                          {product.category === 'flower' ? ' Flower' : ' Gift'}
                         </span>
                       </td>
                       <td style={tdStyle}>Rs. {product.price.toLocaleString()}</td>
@@ -348,7 +342,6 @@ function AdminPage() {
                       </td>
                       <td style={tdStyle}>
                         <div style={{ display: 'flex', gap: '8px' }}>
-                          {/* Edit button */}
                           <button
                             onClick={() => handleOpenEdit(product)}
                             style={{
@@ -363,7 +356,6 @@ function AdminPage() {
                           >
                             Edit
                           </button>
-                          {/* Delete button */}
                           <button
                             onClick={() => handleDeleteProduct(product._id, product.name)}
                             style={{
@@ -588,8 +580,8 @@ function AdminPage() {
                   required
                   style={inputStyle}
                 >
-                  <option value="flower">🌸 Flower</option>
-                  <option value="gift">🎁 Gift</option>
+                  <option value="flower"> Flower</option>
+                  <option value="gift"> Gift</option>
                 </select>
               </label>
 
@@ -608,31 +600,112 @@ function AdminPage() {
                 />
               </label>
 
-              {/* Image filename */}
+              {/* Image - filename or URL */}
               <label style={labelStyle}>
-                Image Filename*
-                <input
-                  type="text"
-                  name="image"
-                  value={form.image}
-                  onChange={handleFormChange}
-                  required
-                  style={inputStyle}
-                  placeholder="e.g. redRose.jpeg"
-                />
-                <span style={{ fontSize: '11px', color: '#999', marginTop: '4px', display: 'block' }}>
-                  Image must already exist in client/src/assets/flowers/ or gifts/ folder
-                </span>
+                Product Image*
+
+                {/* Toggle buttons */}
+                <div style={{ display: 'flex', gap: '10px', marginTop: '8px', marginBottom: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, imageType: 'filename' })}
+                    style={{
+                      flex: 1,
+                      padding: '7px',
+                      borderRadius: '6px',
+                      border: '1px solid #e91e8c',
+                      backgroundColor: (!form.imageType || form.imageType === 'filename') ? '#e91e8c' : 'white',
+                      color: (!form.imageType || form.imageType === 'filename') ? 'white' : '#e91e8c',
+                      cursor: 'pointer',
+                      fontSize: '13px'
+                    }}
+                  >
+                    Use Filename
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, imageType: 'url', image: '' })}
+                    style={{
+                      flex: 1,
+                      padding: '7px',
+                      borderRadius: '6px',
+                      border: '1px solid #e91e8c',
+                      backgroundColor: form.imageType === 'url' ? '#e91e8c' : 'white',
+                      color: form.imageType === 'url' ? 'white' : '#e91e8c',
+                      cursor: 'pointer',
+                      fontSize: '13px'
+                    }}
+                  >
+                    Use Image URL
+                  </button>
+                </div>
+
+                {/* Filename input */}
+                {(!form.imageType || form.imageType === 'filename') && (
+                  <>
+                    <input
+                      type="text"
+                      name="image"
+                      value={form.image}
+                      onChange={handleFormChange}
+                      required
+                      style={inputStyle}
+                      placeholder="e.g. redRose.jpeg"
+                    />
+                    <span style={{ fontSize: '11px', color: '#999', marginTop: '4px', display: 'block' }}>
+                      Image must exist in client/src/assets/flowers/ or gifts/ folder
+                    </span>
+                  </>
+                )}
+
+                {/* URL input */}
+                {form.imageType === 'url' && (
+                  <>
+                    <input
+                      type="text"
+                      name="image"
+                      value={form.image}
+                      onChange={handleFormChange}
+                      required
+                      style={inputStyle}
+                      placeholder="https://example.com/image.jpg"
+                    />
+                    <span style={{ fontSize: '11px', color: '#999', marginTop: '4px', display: 'block' }}>
+                      Paste a direct image URL from the web
+                    </span>
+                    {/* Live preview */}
+                    {form.image && form.image.startsWith('http') && (
+                      <img
+                        src={form.image}
+                        alt="Preview"
+                        style={{
+                          width: '100%',
+                          height: '120px',
+                          objectFit: 'cover',
+                          borderRadius: '8px',
+                          marginTop: '8px',
+                          border: '1px solid #f0c0d8'
+                        }}
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
+                    )}
+                  </>
+                )}
               </label>
 
-              {/* Color (flowers only) */}
+              {/* Color - only for flowers */}
               {form.category === 'flower' && (
                 <label style={labelStyle}>
                   Color
                   <select
-                    name="color"
-                    value={form.color}
-                    onChange={handleFormChange}
+                    value={getColorDropdownValue()}
+                    onChange={(e) => {
+                      if (e.target.value === 'Other') {
+                        setForm({ ...form, color: '' });
+                      } else {
+                        setForm({ ...form, color: e.target.value });
+                      }
+                    }}
                     style={inputStyle}
                   >
                     <option value="">Select color</option>
@@ -643,7 +716,30 @@ function AdminPage() {
                     <option value="Blue">Blue</option>
                     <option value="Purple">Purple</option>
                     <option value="Mixed">Mixed</option>
+                    <option value="Other">Other (type below)</option>
                   </select>
+
+                  {/* Custom color input - shows when Other is selected */}
+                  {!standardColors.includes(form.color) && getColorDropdownValue() === 'Other' && (
+                    <input
+                      type="text"
+                      placeholder="Type custom color e.g. Orange"
+                      value={form.color}
+                      onChange={(e) => setForm({ ...form, color: e.target.value })}
+                      style={{ ...inputStyle, marginTop: '8px' }}
+                    />
+                  )}
+
+                  {/* Also show text input if editing and color is non-standard */}
+                  {editingProduct && form.color && !standardColors.includes(form.color) && (
+                    <input
+                      type="text"
+                      placeholder="Type custom color e.g. Orange"
+                      value={form.color}
+                      onChange={(e) => setForm({ ...form, color: e.target.value })}
+                      style={{ ...inputStyle, marginTop: '8px' }}
+                    />
+                  )}
                 </label>
               )}
 

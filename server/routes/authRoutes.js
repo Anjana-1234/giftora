@@ -3,10 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-
-// Temporary in-memory store for reset codes
-// { email: { code: '123456', expiry: timestamp } }
-const resetCodes = {};
+const ResetCode = require('../models/ResetCode');
 
 // POST /api/auth/signup
 router.post('/signup', async (req, res) => {
@@ -19,7 +16,6 @@ router.post('/signup', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = new User({ name, email, password: hashedPassword });
     const savedUser = await newUser.save();
 
@@ -81,11 +77,12 @@ router.post('/login', async (req, res) => {
 });
 
 // POST /api/auth/verify-email
-// Checks if email exists before sending reset code
+// Checks if email exists and generates a reset code stored in MongoDB
 router.post('/verify-email', async (req, res) => {
   try {
     const { email } = req.body;
 
+    // Check user exists
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: 'No account found with this email address' });
@@ -94,15 +91,17 @@ router.post('/verify-email', async (req, res) => {
     // Generate a 6-digit reset code
     const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Store the code with 15-minute expiry
-    resetCodes[email] = {
-      code: resetCode,
-      expiry: Date.now() + 15 * 60 * 1000, // 15 minutes
-      name: user.name,
-    };
+    // Delete any existing codes for this email first
+    await ResetCode.deleteMany({ email });
 
-    // Send code back to frontend so EmailJS can send it
-    // (EmailJS sends the email from the frontend)
+    // Save the new code to MongoDB (auto-expires in 15 minutes via TTL index)
+    await ResetCode.create({
+      email,
+      code: resetCode,
+      userName: user.name,
+    });
+
+    // Send code back to frontend so EmailJS can send it to the user
     res.json({
       resetCode,
       userName: user.name,
@@ -115,24 +114,19 @@ router.post('/verify-email', async (req, res) => {
 });
 
 // POST /api/auth/reset-password
-// Verifies code and updates password
+// Verifies the code from MongoDB and updates the password
 router.post('/reset-password', async (req, res) => {
   try {
     const { email, code, newPassword } = req.body;
 
-    // Check if a reset code exists for this email
-    const stored = resetCodes[email];
+    // Look up the reset code in MongoDB
+    const stored = await ResetCode.findOne({ email });
+
     if (!stored) {
       return res.status(400).json({ message: 'No reset code found. Please request a new one.' });
     }
 
-    // Check if the code has expired
-    if (Date.now() > stored.expiry) {
-      delete resetCodes[email];
-      return res.status(400).json({ message: 'Reset code has expired. Please request a new one.' });
-    }
-
-    // Check if the code matches
+    // Check if code matches
     if (stored.code !== code) {
       return res.status(400).json({ message: 'Invalid reset code. Please check your email.' });
     }
@@ -140,11 +134,11 @@ router.post('/reset-password', async (req, res) => {
     // Hash the new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update the password in MongoDB
+    // Update password in MongoDB
     await User.findOneAndUpdate({ email }, { password: hashedPassword });
 
-    // Remove the used reset code
-    delete resetCodes[email];
+    // Delete the used reset code
+    await ResetCode.deleteMany({ email });
 
     res.json({ message: 'Password reset successfully! You can now log in.' });
 

@@ -1,15 +1,9 @@
-// Import express to create a router
 const express = require('express');
 const router = express.Router();
-
-// Import bcrypt to hash and compare passwords
 const bcrypt = require('bcryptjs');
-
-// Import jwt to create login tokens
 const jwt = require('jsonwebtoken');
-
-// Import our User model
 const User = require('../models/User');
+const ResetCode = require('../models/ResetCode');
 
 // POST /api/auth/signup
 router.post('/signup', async (req, res) => {
@@ -22,16 +16,9 @@ router.post('/signup', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = new User({
-      name,
-      email,
-      password: hashedPassword,
-    });
-
+    const newUser = new User({ name, email, password: hashedPassword });
     const savedUser = await newUser.save();
 
-    // isAdmin is included in token so Navbar can check it
     const token = jwt.sign(
       { userId: savedUser._id, isAdmin: savedUser.isAdmin },
       process.env.JWT_SECRET,
@@ -44,7 +31,7 @@ router.post('/signup', async (req, res) => {
         id: savedUser._id,
         name: savedUser.name,
         email: savedUser.email,
-        isAdmin: savedUser.isAdmin, // included so frontend knows immediately
+        isAdmin: savedUser.isAdmin,
       },
     });
 
@@ -68,7 +55,6 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
-    // isAdmin is included in token so middleware can check it
     const token = jwt.sign(
       { userId: user._id, isAdmin: user.isAdmin },
       process.env.JWT_SECRET,
@@ -81,12 +67,83 @@ router.post('/login', async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        isAdmin: user.isAdmin, // included so Navbar shows Admin button correctly
+        isAdmin: user.isAdmin,
       },
     });
 
   } catch (error) {
     res.status(500).json({ message: 'Login failed', error: error.message });
+  }
+});
+
+// POST /api/auth/verify-email
+// Checks if email exists and generates a reset code stored in MongoDB
+router.post('/verify-email', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Check user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'No account found with this email address' });
+    }
+
+    // Generate a 6-digit reset code
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Delete any existing codes for this email first
+    await ResetCode.deleteMany({ email });
+
+    // Save the new code to MongoDB (auto-expires in 15 minutes via TTL index)
+    await ResetCode.create({
+      email,
+      code: resetCode,
+      userName: user.name,
+    });
+
+    // Send code back to frontend so EmailJS can send it to the user
+    res.json({
+      resetCode,
+      userName: user.name,
+      message: 'Verification successful'
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// POST /api/auth/reset-password
+// Verifies the code from MongoDB and updates the password
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { email, code, newPassword } = req.body;
+
+    // Look up the reset code in MongoDB
+    const stored = await ResetCode.findOne({ email });
+
+    if (!stored) {
+      return res.status(400).json({ message: 'No reset code found. Please request a new one.' });
+    }
+
+    // Check if code matches
+    if (stored.code !== code) {
+      return res.status(400).json({ message: 'Invalid reset code. Please check your email.' });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password in MongoDB
+    await User.findOneAndUpdate({ email }, { password: hashedPassword });
+
+    // Delete the used reset code
+    await ResetCode.deleteMany({ email });
+
+    res.json({ message: 'Password reset successfully! You can now log in.' });
+
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to reset password', error: error.message });
   }
 });
 

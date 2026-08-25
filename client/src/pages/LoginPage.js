@@ -64,9 +64,12 @@ function LoginPage() {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Password
-          </label>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+            <label style={{ fontWeight: 'bold' }}>Password</label>
+            <Link to="/forgot-password" style={{ color: '#e91e8c', fontSize: '13px' }}>
+              Forgot Password?
+            </Link>
+          </div>
           <input
             type="password"
             value={password}

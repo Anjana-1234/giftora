@@ -35,12 +35,13 @@ function AdminPage() {
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formError, setFormError] = useState(null);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (!user) { navigate('/login'); return; }
-    if (!user.isAdmin) { navigate('/'); return; }
-    fetchAllData();
-  }, [user, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+      // Redirect to admin login if not logged in or not admin
+      if (!user) { navigate('/admin/login'); return; }
+      if (!user.isAdmin) { navigate('/admin/login'); return; }
+      fetchAllData();
+    }, [user, navigate]);
 
   async function fetchAllData() {
     try {

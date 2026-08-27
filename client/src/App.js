@@ -16,6 +16,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import AdminPage from './pages/AdminPage';
+import AdminLoginPage from './pages/AdminLoginPage';
 
 function App() {
   return (
@@ -23,28 +24,35 @@ function App() {
       <CartProvider>
         <BrowserRouter>
 
-          {/* Navbar shows on every page */}
-          <Navbar />
+          <Routes>
 
-          {/* Main content area */}
-          <main style={{ minHeight: '80vh' }}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/shop" element={<ShopPage />} />
-              <Route path="/gifts" element={<GiftsPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/order-confirmation/:id" element={<OrderConfirmationPage />} />
-              <Route path="/payment-success" element={<PaymentSuccessPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/admin" element={<AdminPage />} />
-            </Routes>
-          </main>
+            {/* Admin routes - no Navbar or Footer */}
+            <Route path="/admin/login" element={<AdminLoginPage />} />
+            <Route path="/admin" element={<AdminPage />} />
 
-          {/* Footer shows on every page */}
-          <Footer />
+            {/* All customer routes - with Navbar and Footer */}
+            <Route path="/*" element={
+              <>
+                <Navbar />
+                <main style={{ minHeight: '80vh' }}>
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/shop" element={<ShopPage />} />
+                    <Route path="/gifts" element={<GiftsPage />} />
+                    <Route path="/cart" element={<CartPage />} />
+                    <Route path="/checkout" element={<CheckoutPage />} />
+                    <Route path="/order-confirmation/:id" element={<OrderConfirmationPage />} />
+                    <Route path="/payment-success" element={<PaymentSuccessPage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/signup" element={<SignupPage />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                  </Routes>
+                </main>
+                <Footer />
+              </>
+            } />
+
+          </Routes>
 
         </BrowserRouter>
       </CartProvider>

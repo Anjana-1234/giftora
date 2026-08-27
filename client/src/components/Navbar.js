@@ -8,7 +8,6 @@ function Navbar() {
 
   const { getCartCount } = useCart();
   const { user, logout } = useAuth();
-  const isAdmin = user && (user.isAdmin === true);
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -162,21 +161,6 @@ function Navbar() {
                   Hi, {user.name.split(' ')[0]}
                 </span>
 
-                {/* Only show if user is admin */}
-                {isAdmin && (
-                  <Link to="/admin" style={{
-                    color: 'white',
-                    textDecoration: 'none',
-                    fontSize: '13px',
-                    border: '1px solid white',
-                    padding: '5px 12px',
-                    borderRadius: '20px',
-                    backgroundColor: 'rgba(255,255,255,0.15)'
-                  }}>
-                    ⚙️ Admin
-                  </Link>
-                )}
-
                 <button
                   onClick={logout}
                   style={{
@@ -273,21 +257,7 @@ function Navbar() {
                 <span style={{ color: 'rgba(255,255,255,0.8)', padding: '10px 5px', fontSize: '14px' }}>
                   👤 Hi, {user.name}
                 </span>
-                {isAdmin && (
-                  <Link
-                    to="/admin"
-                    onClick={() => setMenuOpen(false)}
-                    style={{
-                      color: 'white',
-                      textDecoration: 'none',
-                      fontSize: '15px',
-                      padding: '10px 5px',
-                      borderBottom: '1px solid rgba(255,255,255,0.15)'
-                    }}
-                  >
-                    ⚙️ Admin Dashboard
-                  </Link>
-                )}
+                
                 <button
                   onClick={() => { logout(); setMenuOpen(false); }}
                   style={{

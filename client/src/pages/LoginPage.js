@@ -1,23 +1,15 @@
-// useState for form fields, useNavigate to redirect after login
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-
-// Import our auth context
 import { useAuth } from '../context/AuthContext';
 
 function LoginPage() {
 
-  // Get the login function from auth context
   const { login } = useAuth();
-
-  // Lets us redirect after successful login
   const navigate = useNavigate();
 
-  // Form field values
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  // Tracks loading and error states
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -28,10 +20,8 @@ function LoginPage() {
 
     try {
       await login(email, password);
-      // After successful login, send them to the shop page
       navigate('/shop');
     } catch (err) {
-      // Show the error message sent back from our backend
       setError(err.response?.data?.message || 'Login failed. Please try again.');
       setSubmitting(false);
     }
@@ -44,6 +34,7 @@ function LoginPage() {
 
       <form onSubmit={handleSubmit}>
 
+        {/* Email */}
         <div style={{ marginBottom: '15px' }}>
           <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
             Email
@@ -63,32 +54,66 @@ function LoginPage() {
           />
         </div>
 
+        {/* Password with eye icon */}
         <div style={{ marginBottom: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '5px'
+          }}>
             <label style={{ fontWeight: 'bold' }}>Password</label>
-            <Link to="/forgot-password" style={{ color: '#e91e8c', fontSize: '13px' }}>
+            <Link
+              to="/forgot-password"
+              style={{ color: '#e91e8c', fontSize: '13px' }}
+            >
               Forgot Password?
             </Link>
           </div>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '6px',
-              border: '1px solid #ccc',
-              fontSize: '14px'
-            }}
-          />
+
+          {/* Input wrapper for eye icon */}
+          <div style={{ position: 'relative' }}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: '10px 40px 10px 10px',
+                borderRadius: '6px',
+                border: '1px solid #ccc',
+                fontSize: '14px'
+              }}
+            />
+            {/* Eye toggle button */}
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '16px',
+                color: '#999',
+                padding: '0'
+              }}
+            >
+              {showPassword ? '◉̷' : '👁️'}
+            </button>
+          </div>
         </div>
 
+        {/* Error */}
         {error && (
           <p style={{ color: 'red', fontSize: '14px', marginBottom: '15px' }}>{error}</p>
         )}
 
+        {/* Submit */}
         <button
           type="submit"
           disabled={submitting}
@@ -110,7 +135,8 @@ function LoginPage() {
       </form>
 
       <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px' }}>
-        Don't have an account? <Link to="/signup" style={{ color: '#e91e8c' }}>Sign up</Link>
+        Don't have an account?{' '}
+        <Link to="/signup" style={{ color: '#e91e8c' }}>Sign up</Link>
       </p>
 
     </div>

@@ -41,6 +41,8 @@ export function AuthProvider({ children }) {
   }
 
   // Function to log in an existing user
+  // Returns the logged-in user object so callers (e.g. admin login page)
+  // can inspect it right away instead of waiting on state to update
   async function login(email, password) {
     const response = await api.post('/auth/login', { email, password });
 
@@ -48,6 +50,8 @@ export function AuthProvider({ children }) {
     localStorage.setItem('user', JSON.stringify(response.data.user));
 
     setUser(response.data.user);
+
+    return response.data.user;
   }
 
   // Function to log out - clears everything

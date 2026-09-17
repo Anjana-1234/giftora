@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axiosConfig';
 
@@ -21,7 +20,6 @@ const standardColors = ['Red', 'Pink', 'White', 'Yellow', 'Blue', 'Purple', 'Mix
 function AdminPage() {
 
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState(null);
   const [orders, setOrders] = useState([]);
@@ -35,12 +33,12 @@ function AdminPage() {
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formError, setFormError] = useState(null);
 
+  // AdminRoute already guarantees only a logged-in admin reaches this
+  // component, so this just loads the dashboard data on mount.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (!user) { navigate('/login'); return; }
-    if (!user.isAdmin) { navigate('/'); return; }
     fetchAllData();
-  }, [user, navigate]);
+  }, []);
 
   async function fetchAllData() {
     try {

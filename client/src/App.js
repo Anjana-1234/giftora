@@ -20,17 +20,21 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminPage from './pages/AdminPage';
 
-// Everything under /admin (including /admin/login) skips the customer
-// Navbar/Footer entirely -- it gets its own AdminLayout instead.
+// Auth pages (login/signup/forgot-password) and everything under /admin
+// (including /admin/login) skip the customer Navbar/Footer entirely.
+const NO_CHROME_PATHS = ['/login', '/signup', '/forgot-password'];
+
 function AppLayout() {
   const location = useLocation();
   const isAdminArea = location.pathname.startsWith('/admin');
+  const isAuthPage = NO_CHROME_PATHS.includes(location.pathname);
+  const hideChrome = isAdminArea || isAuthPage;
 
   return (
     <>
-      {!isAdminArea && <Navbar />}
+      {!hideChrome && <Navbar />}
 
-      <main style={{ minHeight: isAdminArea ? undefined : '80vh' }}>
+      <main style={{ minHeight: hideChrome ? undefined : '80vh' }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/shop" element={<ShopPage />} />
@@ -58,7 +62,7 @@ function AppLayout() {
         </Routes>
       </main>
 
-      {!isAdminArea && <Footer />}
+      {!hideChrome && <Footer />}
     </>
   );
 }

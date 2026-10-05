@@ -80,6 +80,18 @@ function AdminPage() {
     }
   }
 
+  async function handleToggleAdmin(targetUser) {
+    const verb = targetUser.isAdmin ? 'remove admin access from' : 'make';
+    if (!window.confirm(`Are you sure you want to ${verb} ${targetUser.name}${targetUser.isAdmin ? '' : ' an admin'}?`)) return;
+
+    try {
+      const response = await api.patch(`/admin/users/${targetUser._id}/toggle-admin`);
+      setUsers(users.map((u) => (u._id === targetUser._id ? response.data : u)));
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to update user.');
+    }
+  }
+
   function handleOpenAdd() {
     setEditingProduct(null);
     setForm(emptyForm);
@@ -483,27 +495,54 @@ function AdminPage() {
                     <th style={thStyle}>Email</th>
                     <th style={thStyle}>Role</th>
                     <th style={thStyle}>Joined</th>
+                    <th style={thStyle}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((u) => (
-                    <tr key={u._id} style={{ backgroundColor: 'white' }}>
-                      <td style={tdStyle}><strong>{u.name}</strong></td>
-                      <td style={tdStyle}>{u.email}</td>
-                      <td style={tdStyle}>
-                        <span style={{
-                          padding: '3px 8px',
-                          borderRadius: '12px',
-                          fontSize: '12px',
-                          backgroundColor: u.isAdmin ? '#fff3cd' : '#f0f0f0',
-                          color: u.isAdmin ? '#856404' : '#666',
-                        }}>
-                          {u.isAdmin ? '⭐ Admin' : 'Customer'}
-                        </span>
-                      </td>
-                      <td style={tdStyle}>{new Date(u.createdAt).toLocaleDateString()}</td>
-                    </tr>
-                  ))}
+                  {users.map((u) => {
+                    const isSelf = u._id === user?.id;
+                    return (
+                      <tr key={u._id} style={{ backgroundColor: 'white' }}>
+                        <td style={tdStyle}>
+                          <strong>{u.name}</strong>{isSelf && <span style={{ color: '#999', fontSize: '12px' }}> (you)</span>}
+                        </td>
+                        <td style={tdStyle}>{u.email}</td>
+                        <td style={tdStyle}>
+                          <span style={{
+                            padding: '3px 8px',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            backgroundColor: u.isAdmin ? '#fff3cd' : '#f0f0f0',
+                            color: u.isAdmin ? '#856404' : '#666',
+                          }}>
+                            {u.isAdmin ? '⭐ Admin' : 'Customer'}
+                          </span>
+                        </td>
+                        <td style={tdStyle}>{new Date(u.createdAt).toLocaleDateString()}</td>
+                        <td style={tdStyle}>
+                          {isSelf ? (
+                            <span style={{ color: '#ccc', fontSize: '13px' }}>—</span>
+                          ) : (
+                            <button
+                              onClick={() => handleToggleAdmin(u)}
+                              style={{
+                                padding: '5px 12px',
+                                borderRadius: '6px',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontSize: '12px',
+                                fontWeight: 'bold',
+                                backgroundColor: u.isAdmin ? '#f8d7da' : '#d4edda',
+                                color: u.isAdmin ? '#721c24' : '#155724',
+                              }}
+                            >
+                              {u.isAdmin ? 'Remove Admin' : 'Make Admin'}
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AuthLayout from '../components/AuthLayout';
+import EyeIcon from '../components/EyeIcon';
 
 function SignupPage() {
 
@@ -29,128 +31,74 @@ function SignupPage() {
   }
 
   return (
-    <div style={{ padding: '40px 30px', maxWidth: '400px', margin: '0 auto' }}>
+    <AuthLayout
+      title="Create your account"
+      subtitle="Save your details for faster checkout next time."
+      footer={
+        <>Already have an account? <Link to="/login" className="auth-link">Sign in</Link></>
+      }
+    >
+      <form onSubmit={handleSubmit} noValidate>
 
-      <h1 style={{ color: '#e91e8c', textAlign: 'center' }}>Sign Up</h1>
-
-      <form onSubmit={handleSubmit}>
-
-        {/* Full Name */}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Full Name
-          </label>
+        <div className="auth-field">
+          <label htmlFor="name" className="auth-label">Full name</label>
           <input
+            id="name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '6px',
-              border: '1px solid #ccc',
-              fontSize: '14px'
-            }}
+            className="auth-input"
+            autoComplete="name"
           />
         </div>
 
-        {/* Email */}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Email
-          </label>
+        <div className="auth-field">
+          <label htmlFor="email" className="auth-label">Email</label>
           <input
+            id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '6px',
-              border: '1px solid #ccc',
-              fontSize: '14px'
-            }}
+            className="auth-input"
+            autoComplete="email"
           />
         </div>
 
-        {/* Password with eye icon */}
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Password
-          </label>
-          <div style={{ position: 'relative' }}>
+        <div className="auth-field">
+          <label htmlFor="password" className="auth-label">Password</label>
+          <div className="auth-input-wrap">
             <input
+              id="password"
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              style={{
-                width: '100%',
-                padding: '10px 40px 10px 10px',
-                borderRadius: '6px',
-                border: '1px solid #ccc',
-                fontSize: '14px'
-              }}
+              className="auth-input"
+              autoComplete="new-password"
             />
             <button
               type="button"
+              className="auth-eye-btn"
               onClick={() => setShowPassword(!showPassword)}
-              style={{
-                position: 'absolute',
-                right: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '16px',
-                color: '#999',
-                padding: '0'
-              }}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              {showPassword ? '◉̷' : '👁️'}
+              <EyeIcon open={showPassword} />
             </button>
           </div>
-          <p style={{ color: '#999', fontSize: '12px', marginTop: '4px' }}>
-            Minimum 6 characters
-          </p>
         </div>
+        <p className="auth-hint">Minimum 6 characters</p>
 
-        {/* Error */}
-        {error && (
-          <p style={{ color: 'red', fontSize: '14px', marginBottom: '15px' }}>{error}</p>
-        )}
+        {error && <p className="auth-error" role="alert">{error}</p>}
 
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={submitting}
-          style={{
-            width: '100%',
-            backgroundColor: submitting ? '#ccc' : '#e91e8c',
-            color: 'white',
-            border: 'none',
-            padding: '12px',
-            borderRadius: '8px',
-            cursor: submitting ? 'not-allowed' : 'pointer',
-            fontSize: '16px',
-            fontWeight: 'bold'
-          }}
-        >
-          {submitting ? 'Creating account...' : 'Sign Up'}
+        <button type="submit" className="auth-submit" disabled={submitting}>
+          {submitting ? 'Creating account…' : 'Create account'}
         </button>
 
       </form>
-
-      <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px' }}>
-        Already have an account?{' '}
-        <Link to="/login" style={{ color: '#e91e8c' }}>Login</Link>
-      </p>
-
-    </div>
+    </AuthLayout>
   );
 }
 

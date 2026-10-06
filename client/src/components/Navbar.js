@@ -161,6 +161,27 @@ function Navbar() {
                   Hi, {user.name.split(' ')[0]}
                 </span>
 
+                {/* Only ever renders for an admin account -- invisible to customers */}
+                {user.isAdmin && (
+                  <Link
+                    to="/admin"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      color: '#f5d98a',
+                      textDecoration: 'none',
+                      fontSize: '13px',
+                      fontWeight: 'bold',
+                      border: '1px solid rgba(245,217,138,0.5)',
+                      padding: '7px 14px',
+                      borderRadius: '20px'
+                    }}
+                  >
+                    ⭐ Dashboard
+                  </Link>
+                )}
+
                 <button
                   onClick={logout}
                   style={{
@@ -257,6 +278,24 @@ function Navbar() {
                 <span style={{ color: 'rgba(255,255,255,0.8)', padding: '10px 5px', fontSize: '14px' }}>
                   👤 Hi, {user.name}
                 </span>
+
+                {user.isAdmin && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setMenuOpen(false)}
+                    style={{
+                      color: '#f5d98a',
+                      textDecoration: 'none',
+                      fontSize: '15px',
+                      padding: '10px 5px',
+                      borderBottom: '1px solid rgba(255,255,255,0.15)',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    ⭐ Admin Dashboard
+                  </Link>
+                )}
+
                 <button
                   onClick={() => { logout(); setMenuOpen(false); }}
                   style={{

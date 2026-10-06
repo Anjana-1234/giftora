@@ -1,11 +1,22 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AuthLayout from '../components/AuthLayout';
+import EyeIcon from '../components/EyeIcon';
 
 function LoginPage() {
 
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Toggle between the customer and admin login form on the same page.
+  // ?as=admin lets AdminRoute send someone here with the admin tab
+  // already selected, but the toggle itself is visible to everyone --
+  // no hidden URL needed.
+  const [loginType, setLoginType] = useState(
+    searchParams.get('as') === 'admin' ? 'admin' : 'customer'
+  );
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,133 +24,123 @@ function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
+  const isAdminLogin = loginType === 'admin';
+
   async function handleSubmit(e) {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
 
     try {
-      await login(email, password);
-      navigate('/shop');
+      const loggedInUser = await login(email, password);
+
+      if (isAdminLogin && !loggedInUser.isAdmin) {
+        // Correct credentials, but not an admin account -- don't leave
+        // them signed in on the admin tab.
+        logout();
+        setError('This login is for administrators only.');
+        setSubmitting(false);
+        return;
+      }
+
+      navigate(isAdminLogin ? '/admin' : '/shop');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
       setSubmitting(false);
     }
   }
 
+  const tabs = (
+    <div className="auth-tabs" role="tablist" aria-label="Login as">
+      <button
+        type="button"
+        role="tab"
+        aria-selected={!isAdminLogin}
+        className={`auth-tab ${!isAdminLogin ? 'active' : ''}`}
+        onClick={() => { setLoginType('customer'); setError(null); }}
+      >
+        Customer
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={isAdminLogin}
+        className={`auth-tab ${isAdminLogin ? 'active' : ''}`}
+        onClick={() => { setLoginType('admin'); setError(null); }}
+      >
+        Admin
+      </button>
+    </div>
+  );
+
   return (
-    <div style={{ padding: '40px 30px', maxWidth: '400px', margin: '0 auto' }}>
+    <AuthLayout
+      tabs={tabs}
+      title={isAdminLogin ? 'Admin sign in' : 'Welcome back'}
+      subtitle={
+        isAdminLogin
+          ? 'Manage orders, products and customers.'
+          : 'Sign in to pick up your cart or track a delivery.'
+      }
+      footer={
+        !isAdminLogin && (
+          <>Don't have an account? <Link to="/signup" className="auth-link">Create one</Link></>
+        )
+      }
+    >
+      <form onSubmit={handleSubmit} noValidate>
 
-      <h1 style={{ color: '#e91e8c', textAlign: 'center' }}>Login</h1>
-
-      <form onSubmit={handleSubmit}>
-
-        {/* Email */}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Email
-          </label>
+        <div className="auth-field">
+          <label htmlFor="email" className="auth-label">Email</label>
           <input
+            id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '6px',
-              border: '1px solid #ccc',
-              fontSize: '14px'
-            }}
+            className="auth-input"
+            autoComplete="email"
           />
         </div>
 
-        {/* Password with eye icon */}
-        <div style={{ marginBottom: '20px' }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '5px'
-          }}>
-            <label style={{ fontWeight: 'bold' }}>Password</label>
-            <Link
-              to="/forgot-password"
-              style={{ color: '#e91e8c', fontSize: '13px' }}
-            >
-              Forgot Password?
-            </Link>
+        <div className="auth-field">
+          <div className="auth-label-row">
+            <label htmlFor="password" className="auth-label">Password</label>
+            {!isAdminLogin && (
+              <Link to="/forgot-password" className="auth-link auth-link-small">
+                Forgot password?
+              </Link>
+            )}
           </div>
-
-          {/* Input wrapper for eye icon */}
-          <div style={{ position: 'relative' }}>
+          <div className="auth-input-wrap">
             <input
+              id="password"
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              style={{
-                width: '100%',
-                padding: '10px 40px 10px 10px',
-                borderRadius: '6px',
-                border: '1px solid #ccc',
-                fontSize: '14px'
-              }}
+              className="auth-input"
+              autoComplete="current-password"
             />
-            {/* Eye toggle button */}
             <button
               type="button"
+              className="auth-eye-btn"
               onClick={() => setShowPassword(!showPassword)}
-              style={{
-                position: 'absolute',
-                right: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '16px',
-                color: '#999',
-                padding: '0'
-              }}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              {showPassword ? '◉̷' : '👁️'}
+              <EyeIcon open={showPassword} />
             </button>
           </div>
         </div>
 
-        {/* Error */}
-        {error && (
-          <p style={{ color: 'red', fontSize: '14px', marginBottom: '15px' }}>{error}</p>
-        )}
+        {error && <p className="auth-error" role="alert">{error}</p>}
 
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={submitting}
-          style={{
-            width: '100%',
-            backgroundColor: submitting ? '#ccc' : '#e91e8c',
-            color: 'white',
-            border: 'none',
-            padding: '12px',
-            borderRadius: '8px',
-            cursor: submitting ? 'not-allowed' : 'pointer',
-            fontSize: '16px',
-            fontWeight: 'bold'
-          }}
-        >
-          {submitting ? 'Logging in...' : 'Login'}
+        <button type="submit" className="auth-submit" disabled={submitting}>
+          {submitting ? 'Signing in…' : (isAdminLogin ? 'Sign in as admin' : 'Sign in')}
         </button>
 
       </form>
-
-      <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px' }}>
-        Don't have an account?{' '}
-        <Link to="/signup" style={{ color: '#e91e8c' }}>Sign up</Link>
-      </p>
-
-    </div>
+    </AuthLayout>
   );
 }
 

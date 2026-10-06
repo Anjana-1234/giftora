@@ -2,8 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 // Replaces the customer Navbar/Footer for anything under /admin.
-// Keeps it deliberately plain — just enough to say "you're in the
-// admin area" and offer a way out.
 function AdminLayout({ children }) {
 
   const { user, logout } = useAuth();
@@ -11,7 +9,7 @@ function AdminLayout({ children }) {
 
   function handleLogout() {
     logout();
-    navigate('/admin/login');
+    navigate('/login');
   }
 
   return (

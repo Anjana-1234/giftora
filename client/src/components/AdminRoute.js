@@ -2,8 +2,8 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 // Wrap any admin page with this. It blocks rendering until we know
-// whether the logged-in user (if any) is an admin, and redirects
-// straight to the admin login screen otherwise — never the customer one.
+// whether the logged-in user (if any) is an admin, and redirects to
+// the login page with the admin tab pre-selected otherwise.
 function AdminRoute({ children }) {
   const { user, loading } = useAuth();
 
@@ -16,7 +16,7 @@ function AdminRoute({ children }) {
   }
 
   if (!user || !user.isAdmin) {
-    return <Navigate to="/admin/login" replace />;
+    return <Navigate to="/login?as=admin" replace />;
   }
 
   return children;

@@ -129,6 +129,31 @@ router.get('/users', async (req, res) => {
   }
 });
 
+// PATCH /api/admin/users/:id/toggle-admin
+// Flips a user's isAdmin flag -- how an admin grants or revokes admin
+// access for someone else. No separate admin signup exists on purpose.
+router.patch('/users/:id/toggle-admin', async (req, res) => {
+  try {
+    // Don't let an admin accidentally strip their own access.
+    if (req.params.id === req.user.userId) {
+      return res.status(400).json({ message: "You can't change your own admin status." });
+    }
+
+    const targetUser = await User.findById(req.params.id);
+    if (!targetUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    targetUser.isAdmin = !targetUser.isAdmin;
+    await targetUser.save();
+
+    const { password, ...safeUser } = targetUser.toObject();
+    res.json(safeUser);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update user', error: error.message });
+  }
+});
+
 // ─── STATS ────────────────────────────────────────────────
 
 // GET /api/admin/stats

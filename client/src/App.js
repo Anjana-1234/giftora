@@ -17,11 +17,11 @@ import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import AdminLoginPage from './pages/AdminLoginPage';
 import AdminPage from './pages/AdminPage';
 
 // Auth pages (login/signup/forgot-password) and everything under /admin
-// (including /admin/login) skip the customer Navbar/Footer entirely.
+// skip the customer Navbar/Footer entirely -- /admin gets its own
+// AdminLayout, and the auth pages get their own AuthLayout.
 const NO_CHROME_PATHS = ['/login', '/signup', '/forgot-password'];
 
 function AppLayout() {
@@ -47,8 +47,7 @@ function AppLayout() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-          {/* Admin area */}
-          <Route path="/admin/login" element={<AdminLoginPage />} />
+          {/* Admin area -- same /login page handles admin sign-in via its tab */}
           <Route
             path="/admin"
             element={

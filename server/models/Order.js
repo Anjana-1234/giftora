@@ -4,6 +4,15 @@ const mongoose = require('mongoose');
 // Define what one order document looks like in MongoDB
 const orderSchema = new mongoose.Schema({
 
+  // The account that placed this order.
+  // Optional on purpose: guests can still check out, and orders placed
+  // before this field existed simply have no user.
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null,
+  },
+
   // List of items in this order - each one is a snapshot, not a live reference
   // This way, even if a product's price changes later, the order keeps the price paid
   items: [

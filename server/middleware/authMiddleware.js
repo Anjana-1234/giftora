@@ -31,6 +31,26 @@ function protect(req, res, next) {
   }
 }
 
+// Like protect, but never blocks the request.
+// If a valid token is sent, req.user is filled in; otherwise the request
+// carries on as a guest (req.user stays undefined).
+// Used for routes that guests and logged-in users can both call, such as checkout.
+function optionalAuth(req, res, next) {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      req.user = jwt.verify(token, process.env.JWT_SECRET);
+    }
+  } catch (error) {
+    // Invalid or expired token -- treat the request as a guest request
+    req.user = undefined;
+  }
+
+  next();
+}
+
 // Middleware to check if the logged-in user is an admin
 // Must be used AFTER the protect middleware
 function adminOnly(req, res, next) {
@@ -41,4 +61,4 @@ function adminOnly(req, res, next) {
   }
 }
 
-module.exports = { protect, adminOnly };
+module.exports = { protect, optionalAuth, adminOnly };

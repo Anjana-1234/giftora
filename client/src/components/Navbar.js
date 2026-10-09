@@ -181,6 +181,7 @@ function Navbar() {
                 {user.isAdmin && (
                   <Link
                     to="/admin"
+                    state={{ from: location.pathname }}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -312,6 +313,7 @@ function Navbar() {
                 {user.isAdmin && (
                   <Link
                     to="/admin"
+                    state={{ from: location.pathname }}
                     onClick={() => setMenuOpen(false)}
                     style={{
                       color: '#f5d98a',

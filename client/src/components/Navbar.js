@@ -161,6 +161,22 @@ function Navbar() {
                   Hi, {user.name.split(' ')[0]}
                 </span>
 
+                <Link
+                  to="/my-orders"
+                  style={{
+                    color: 'white',
+                    textDecoration: 'none',
+                    fontSize: '13px',
+                    fontWeight: 'bold',
+                    padding: '7px 4px',
+                    borderBottom: location.pathname === '/my-orders'
+                      ? '2px solid white'
+                      : '2px solid transparent'
+                  }}
+                >
+                  My Orders
+                </Link>
+
                 {/* Only ever renders for an admin account -- invisible to customers */}
                 {user.isAdmin && (
                   <Link
@@ -278,6 +294,20 @@ function Navbar() {
                 <span style={{ color: 'rgba(255,255,255,0.8)', padding: '10px 5px', fontSize: '14px' }}>
                   👤 Hi, {user.name}
                 </span>
+
+                <Link
+                  to="/my-orders"
+                  onClick={() => setMenuOpen(false)}
+                  style={{
+                    color: 'white',
+                    textDecoration: 'none',
+                    fontSize: '15px',
+                    padding: '10px 5px',
+                    borderBottom: '1px solid rgba(255,255,255,0.15)'
+                  }}
+                >
+                  📦 My Orders
+                </Link>
 
                 {user.isAdmin && (
                   <Link

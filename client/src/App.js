@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AdminRoute from './components/AdminRoute';
 import AdminLayout from './components/AdminLayout';
+import ProtectedRoute from './components/ProtectedRoute';
 
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
@@ -17,6 +18,7 @@ import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import MyOrdersPage from './pages/MyOrdersPage';
 import AdminPage from './pages/AdminPage';
 
 // Auth pages (login/signup/forgot-password) and everything under /admin
@@ -46,6 +48,16 @@ function AppLayout() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+
+          {/* Logged-in customers only */}
+          <Route
+            path="/my-orders"
+            element={
+              <ProtectedRoute>
+                <MyOrdersPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Admin area -- same /login page handles admin sign-in via its tab */}
           <Route

@@ -7,6 +7,9 @@ import { useNavigate } from 'react-router-dom';
 // Import our cart context to get items and total, and clearCart for cash orders
 import { useCart } from '../context/CartContext';
 
+// Import auth context so we can pre-fill name and email for logged-in users
+import { useAuth } from '../context/AuthContext';
+
 // Import our pre-configured axios instance
 import api from '../api/axiosConfig';
 
@@ -18,10 +21,13 @@ function CheckoutPage() {
   // Lets us redirect to confirmation page after a cash order
   const navigate = useNavigate();
 
+  // The logged-in user, if any (guests can still check out)
+  const { user } = useAuth();
+
   // Holds the values typed into the form
   const [formData, setFormData] = useState({
-    customerName: '',
-    email: '',
+    customerName: user ? user.name : '',
+    email: user ? user.email : '',
     phone: '',
     address: '',
     deliveryDate: '',

@@ -57,7 +57,12 @@ function PaymentSuccessPage() {
         navigate(`/order-confirmation/${response.data._id}`);
 
       } catch (err) {
-        setError('Payment succeeded, but saving your order failed. Please contact support.');
+        if (err.response && err.response.status === 409) {
+          // Rare: the last items were bought by someone else while this customer was paying
+          setError('Your payment went through, but an item sold out before we could save your order. Please contact us and we will refund you.');
+        } else {
+          setError('Payment succeeded, but saving your order failed. Please contact support.');
+        }
         setSaving(false);
       }
     }

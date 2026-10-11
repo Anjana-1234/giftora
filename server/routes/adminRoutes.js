@@ -4,6 +4,7 @@ const { protect, adminOnly } = require('../middleware/authMiddleware');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const User = require('../models/User');
+const { releaseStock } = require('../utils/stock');
 
 // All routes protected - must be logged in AND admin
 router.use(protect);
@@ -22,17 +23,37 @@ router.get('/orders', async (req, res) => {
 });
 
 // PUT /api/admin/orders/:id/status
+// Cancelling an order puts its items back in stock.
+// A cancelled order is final -- it can't be re-opened, because its stock
+// has already been given back and may have been sold to someone else.
 router.put('/orders/:id/status', async (req, res) => {
   try {
     const { status } = req.body;
-    const updatedOrder = await Order.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    );
-    if (!updatedOrder) {
+
+    if (!['pending', 'confirmed', 'delivered', 'cancelled'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status' });
+    }
+
+    const order = await Order.findById(req.params.id);
+    if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
+
+    if (order.status === 'cancelled' && status !== 'cancelled') {
+      return res.status(400).json({ message: 'A cancelled order cannot be re-opened.' });
+    }
+
+    if (status === 'cancelled' && order.status !== 'cancelled') {
+      // Only items that were linked to a product can be restocked (older orders have none)
+      await releaseStock(
+        order.items
+          .filter((item) => item.product)
+          .map((item) => ({ product: item.product, quantity: item.quantity }))
+      );
+    }
+
+    order.status = status;
+    const updatedOrder = await order.save();
     res.json(updatedOrder);
   } catch (error) {
     res.status(500).json({ message: 'Failed to update order status', error: error.message });
@@ -64,7 +85,8 @@ router.post('/products', async (req, res) => {
       category,
       color: color || null,
       description: description || '',
-      availableQuantity: Number(availableQuantity) || 100,
+      // Keep 0 as 0 (out of stock); only fall back to 100 when left blank
+      availableQuantity: availableQuantity === '' || availableQuantity === undefined ? 100 : Number(availableQuantity),
     });
 
     const savedProduct = await newProduct.save();
@@ -91,7 +113,7 @@ router.put('/products/:id', async (req, res) => {
         description: description || '',
         availableQuantity: Number(availableQuantity),
       },
-      { new: true }
+      { new: true, runValidators: true }
     );
 
     if (!updatedProduct) {

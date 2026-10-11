@@ -6,14 +6,31 @@ function FlowerCard({ flower }) {
   const { addToCart } = useCart();
   const [showModal, setShowModal] = useState(false);
 
+  // Short message shown when the customer tries to add more than we have
+  const [notice, setNotice] = useState('');
+
+  // Stock info coming from the database
+  const stock = flower.availableQuantity !== undefined ? flower.availableQuantity : 100;
+  const soldOut = stock <= 0;
+  const lowStock = !soldOut && stock <= 5;
+
   function handleAddToCart() {
-    addToCart({
+    if (soldOut) return;
+
+    const added = addToCart({
       id: flower.id,
       name: flower.name,
       price: flower.price,
       image: flower.image,
       type: 'flower',
+      stock: stock,
     });
+
+    // No more stock to add - tell the customer for a moment
+    if (!added) {
+      setNotice(`Only ${stock} available`);
+      setTimeout(() => setNotice(''), 2500);
+    }
   }
 
   return (
@@ -41,7 +58,8 @@ function FlowerCard({ flower }) {
               height: '180px',
               objectFit: 'cover',
               borderRadius: '8px',
-              marginBottom: '10px'
+              marginBottom: '10px',
+              opacity: soldOut ? 0.45 : 1
             }}
           />
           <span style={{
@@ -61,6 +79,22 @@ function FlowerCard({ flower }) {
           }}>
             i
           </span>
+          {soldOut && (
+            <span style={{
+              position: 'absolute',
+              bottom: '20px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              backgroundColor: '#555',
+              color: 'white',
+              padding: '4px 12px',
+              borderRadius: '12px',
+              fontSize: '12px',
+              fontWeight: 'bold'
+            }}>
+              Out of stock
+            </span>
+          )}
         </div>
 
         <h3 style={{ color: '#961e60', margin: '5px 0', fontSize: '14px' }}>
@@ -70,6 +104,15 @@ function FlowerCard({ flower }) {
         <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '5px 0' }}>
           Rs. {flower.price.toLocaleString()}
         </p>
+
+        {lowStock && (
+          <p style={{ margin: '0 0 2px', fontSize: '12px', color: '#c2410c' }}>
+            Only {stock} left
+          </p>
+        )}
+        {notice && (
+          <p style={{ margin: '0 0 2px', fontSize: '12px', color: '#b23a3a' }}>{notice}</p>
+        )}
 
         <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
           <button
@@ -89,18 +132,19 @@ function FlowerCard({ flower }) {
           </button>
           <button
             onClick={handleAddToCart}
+            disabled={soldOut}
             style={{
               flex: 2,
-              backgroundColor: '#883c66',
+              backgroundColor: soldOut ? '#bbb' : '#883c66',
               color: 'white',
               border: 'none',
               padding: '8px',
               borderRadius: '8px',
-              cursor: 'pointer',
+              cursor: soldOut ? 'not-allowed' : 'pointer',
               fontSize: '13px'
             }}
           >
-            Add to cart
+            {soldOut ? 'Out of stock' : 'Add to cart'}
           </button>
         </div>
       </div>
@@ -178,19 +222,20 @@ function FlowerCard({ flower }) {
 
             <button
               onClick={() => { handleAddToCart(); setShowModal(false); }}
+              disabled={soldOut}
               style={{
                 width: '100%',
-                backgroundColor: '#97386c',
+                backgroundColor: soldOut ? '#bbb' : '#97386c',
                 color: 'white',
                 border: 'none',
                 padding: '12px',
                 borderRadius: '8px',
-                cursor: 'pointer',
+                cursor: soldOut ? 'not-allowed' : 'pointer',
                 fontSize: '15px',
                 fontWeight: 'bold'
               }}
             >
-              Add to cart
+              {soldOut ? 'Out of stock' : 'Add to cart'}
             </button>
           </div>
         </div>

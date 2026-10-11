@@ -17,6 +17,9 @@ const orderSchema = new mongoose.Schema({
   // This way, even if a product's price changes later, the order keeps the price paid
   items: [
     {
+      // Which product this line is for - needed to take/return stock.
+      // Orders placed before stock management have no product reference.
+      product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', default: null },
       name: { type: String, required: true },
       price: { type: Number, required: true },
       quantity: { type: Number, required: true },

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 
 // useNavigate lets us redirect after a cash order is placed
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 // Import our cart context to get items and total, and clearCart for cash orders
 import { useCart } from '../context/CartContext';
@@ -44,6 +44,9 @@ function CheckoutPage() {
   // Tracks any error message if something fails
   const [error, setError] = useState(null);
 
+  // Lines like "Red Rose Bouquet: only 2 left" when an item has run low or sold out
+  const [stockProblems, setStockProblems] = useState([]);
+
   // Runs every time the user types in an input field
   function handleChange(e) {
     setFormData({
@@ -61,6 +64,15 @@ function CheckoutPage() {
     return `${year}-${month}-${day}`;
   }
 
+  // Turns the server's stock problems into readable lines for the customer
+  function describeStockProblems(problems) {
+    return (problems || []).map((p) =>
+      p.available <= 0
+        ? `${p.name} is out of stock`
+        : `${p.name}: only ${p.available} left (you chose ${p.requested})`
+    );
+  }
+
   // Builds the order data object shared by both payment methods
   function buildOrderData() {
     return {
@@ -72,6 +84,7 @@ function CheckoutPage() {
       deliveryTime: formData.deliveryTime,
       specialInstructions: formData.specialInstructions,
       items: cartItems.map((item) => ({
+        product: item.id, // the product's database id - needed to take it out of stock
         name: item.name,
         price: item.price,
         quantity: item.quantity,
@@ -88,10 +101,22 @@ function CheckoutPage() {
 
     setSubmitting(true);
     setError(null);
+    setStockProblems([]);
 
     try {
       if (paymentMethod === 'card') {
         // CARD FLOW - redirect to Stripe, order gets saved after payment succeeds
+
+        // Check stock BEFORE sending the customer to pay, so nobody pays for something sold out
+        const stockCheck = await api.post('/products/check-stock', {
+          items: buildOrderData().items,
+        });
+
+        if (!stockCheck.data.ok) {
+          setStockProblems(describeStockProblems(stockCheck.data.problems));
+          setSubmitting(false);
+          return;
+        }
 
         // Save the order details temporarily so PaymentSuccessPage can use them
         sessionStorage.setItem('checkoutDetails', JSON.stringify(buildOrderData()));
@@ -117,7 +142,14 @@ function CheckoutPage() {
       }
 
     } catch (err) {
-      setError('Something went wrong placing your order. Please try again.');
+      if (err.response && err.response.status === 409) {
+        // Someone else bought the stock first
+        setStockProblems(describeStockProblems(err.response.data.problems));
+      } else if (err.response && err.response.status === 400) {
+        setError(err.response.data.message);
+      } else {
+        setError('Something went wrong placing your order. Please try again.');
+      }
       setSubmitting(false);
     }
   }
@@ -379,6 +411,29 @@ function CheckoutPage() {
 
           </div>
         </div>
+
+        {/* Stock problems: tell the customer exactly which items and send them to the cart */}
+        {stockProblems.length > 0 && (
+          <div style={{
+            backgroundColor: '#fff4e5',
+            border: '1px solid #f5c58a',
+            borderRadius: '8px',
+            padding: '12px 15px',
+            marginBottom: '15px',
+            fontSize: '14px',
+            color: '#7a4a00'
+          }}>
+            <strong>Some items are no longer available:</strong>
+            <ul style={{ margin: '8px 0', paddingLeft: '20px' }}>
+              {stockProblems.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+            <Link to="/cart" style={{ color: '#e91e8c', fontWeight: 'bold' }}>
+              Update your cart
+            </Link>
+          </div>
+        )}
 
         {/* Show error message if something failed */}
         {error && (

@@ -7,6 +7,9 @@ const router = express.Router();
 // Import our Product model so we can query the database
 const Product = require('../models/Product');
 
+// Import stock helper used by the checkout stock check
+const { findStockProblems } = require('../utils/stock');
+
 // GET /api/products/flowers
 // Returns only products where category is "flower"
 router.get('/flowers', async (req, res) => {
@@ -41,6 +44,24 @@ router.get('/', async (req, res) => {
     res.json(allProducts);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch products', error: error.message });
+  }
+});
+
+// POST /api/products/check-stock
+// Body: { items: [{ product, quantity }] }
+// Read-only check used by checkout BEFORE sending a customer to pay:
+// are all these items still available in these quantities?
+router.post('/check-stock', async (req, res) => {
+  try {
+    const problems = await findStockProblems(req.body.items);
+
+    if (problems === null) {
+      return res.status(400).json({ message: 'Your cart has an invalid item. Please refresh and try again.' });
+    }
+
+    res.json({ ok: problems.length === 0, problems });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to check stock', error: error.message });
   }
 });
 

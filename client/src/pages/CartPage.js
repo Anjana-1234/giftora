@@ -1,19 +1,80 @@
+// useEffect lets us refresh the cart when this page opens
+import { useEffect } from 'react';
+
 // Import Link to navigate to shop if cart is empty, and to checkout page
 import { Link } from 'react-router-dom';
 
 // Import useCart hook to access cart data and functions
 import { useCart } from '../context/CartContext';
 
+// Box listing what changed when the cart was checked against the shop
+// (a price changed, an item sold out or was removed, a quantity was reduced)
+function CartNotices({ notices, onDismiss }) {
+  if (notices.length === 0) return null;
+
+  return (
+    <div style={{
+      backgroundColor: '#fff4e5',
+      border: '1px solid #f5c58a',
+      borderRadius: '8px',
+      padding: '12px 15px',
+      margin: '15px 0',
+      fontSize: '14px',
+      color: '#7a4a00',
+      textAlign: 'left'
+    }}>
+      <strong>Your cart was updated:</strong>
+      <ul style={{ margin: '8px 0', paddingLeft: '20px' }}>
+        {notices.map((text) => (
+          <li key={text}>{text}</li>
+        ))}
+      </ul>
+      <button
+        onClick={onDismiss}
+        style={{
+          background: 'none',
+          border: 'none',
+          color: '#e91e8c',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          padding: 0,
+          fontSize: '14px'
+        }}
+      >
+        Got it
+      </button>
+    </div>
+  );
+}
+
 function CartPage() {
 
   // Get cart items and functions from our shared cart context
-  const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart();
+  const {
+    cartItems,
+    removeFromCart,
+    updateQuantity,
+    getCartTotal,
+    cartNotices,
+    dismissNotices,
+    refreshCart,
+  } = useCart();
+
+  // Every time the cart page opens, check the cart against the shop's
+  // current prices and stock
+  useEffect(() => {
+    refreshCart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // If cart is empty, show a friendly message with a link to shop
   if (cartItems.length === 0) {
     return (
       <div style={{ padding: '60px 30px', textAlign: 'center' }}>
         <h1 style={{ color: '#e91e8c' }}>Your Cart </h1>
+        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+          <CartNotices notices={cartNotices} onDismiss={dismissNotices} />
+        </div>
         <p style={{ fontSize: '16px', color: '#666', margin: '20px 0' }}>
           Your cart is empty.
         </p>
@@ -39,6 +100,8 @@ function CartPage() {
     <div style={{ padding: '30px', maxWidth: '700px', margin: '0 auto' }}>
 
       <h1 style={{ color: '#a13f75', textAlign: 'center' }}>Your Cart </h1>
+
+      <CartNotices notices={cartNotices} onDismiss={dismissNotices} />
 
       {/* List of cart items */}
       <div style={{ marginTop: '20px' }}>
@@ -72,6 +135,11 @@ function CartPage() {
               <p style={{ margin: 0, color: '#999', fontSize: '13px' }}>
                 {item.type === 'flower' ? 'Bouquet' : 'Gift item'}
               </p>
+              {item.stock !== undefined && item.quantity >= item.stock && (
+                <p style={{ margin: '4px 0 0', color: '#c2410c', fontSize: '12px' }}>
+                  That is all we have in stock ({item.stock} available)
+                </p>
+              )}
             </div>
 
             {/* Quantity controls - minus button, count, plus button */}
@@ -98,17 +166,19 @@ function CartPage() {
                 {item.quantity}
               </span>
 
-              {/* Increase quantity button */}
+              {/* Increase quantity button - disabled once the cart holds all the stock we have */}
               <button
                 onClick={() => updateQuantity(item.id, 1)}
+                disabled={item.stock !== undefined && item.quantity >= item.stock}
                 style={{
                   width: '28px',
                   height: '28px',
                   borderRadius: '6px',
-                  border: '1px solid #e91e8c',
+                  border: '1px solid',
+                  borderColor: item.stock !== undefined && item.quantity >= item.stock ? '#ccc' : '#e91e8c',
                   backgroundColor: 'white',
-                  color: '#e91e8c',
-                  cursor: 'pointer',
+                  color: item.stock !== undefined && item.quantity >= item.stock ? '#ccc' : '#e91e8c',
+                  cursor: item.stock !== undefined && item.quantity >= item.stock ? 'not-allowed' : 'pointer',
                   fontSize: '16px'
                 }}
               >

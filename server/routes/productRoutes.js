@@ -8,7 +8,7 @@ const router = express.Router();
 const Product = require('../models/Product');
 
 // Import stock helper used by the checkout stock check
-const { findStockProblems } = require('../utils/stock');
+const { findStockProblems, getProductSnapshots } = require('../utils/stock');
 
 // GET /api/products/flowers
 // Returns only products where category is "flower"
@@ -62,6 +62,24 @@ router.post('/check-stock', async (req, res) => {
     res.json({ ok: problems.length === 0, problems });
   } catch (error) {
     res.status(500).json({ message: 'Failed to check stock', error: error.message });
+  }
+});
+
+// POST /api/products/lookup
+// Body: { ids: ["productId", ...] }
+// Returns the CURRENT name, price and stock of those products so the cart can
+// refresh what it saved in the browser. Unknown ids are simply left out.
+router.post('/lookup', async (req, res) => {
+  try {
+    const products = await getProductSnapshots(req.body.ids);
+
+    if (products === null) {
+      return res.status(400).json({ message: 'ids must be a list of product ids' });
+    }
+
+    res.json({ products });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to look up products', error: error.message });
   }
 });
 
